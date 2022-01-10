@@ -337,6 +337,19 @@ module.exports = {
                     required: true
                 }
             ]
+        },
+        {
+            name: 'get',
+            type: 'SUB_COMMAND',
+            description: 'Zeigt erweiterte Informationen zu einer Hausaufgabe an.',
+            options: [
+                {
+                    name: 'id',
+                    description: 'ID der Hausaufgabe',
+                    type: 'INTEGER',
+                    required: true
+                }
+            ]
         }
     ],
     /**
@@ -373,6 +386,7 @@ module.exports = {
             success(ita, 'Hausaufgabe hinzugefügt', `Die ${subject} Hausaufgabe bis zum ${day}.${month + 1}. wurde gespeichert (ID: ${data.haid})`)
             data.haid ++
             await fs.writeFile('data.json', JSON.stringify(data))
+            global.events.emit('editMessage')
         } else if(ita.options.getSubcommand() === 'next') {
             var tries = 0
             /**
@@ -430,7 +444,8 @@ module.exports = {
             success(ita, 'Hausaufgabe hinzugefügt', `Die ${subject} Hausaufgabe bis zum ${day}.${month + 1}. wurde gespeichert (ID: ${data.haid})`)
             data.haid ++
             await fs.writeFile('data.json', JSON.stringify(data))
-        } else {
+            global.events.emit('editMessage')
+        } else if(ita.options.getSubcommand() == 'remove') {
             var subject = resolveSubject(args['fach'].value)
             var day = args['tag'].value
             var month = Number(args['monat'].value) - 1
@@ -446,7 +461,33 @@ module.exports = {
                 delete has[month][day][subject]
                 await fs.writeFile('ha.json', JSON.stringify(has))
                 success(ita, 'Hausaufgabe gelöscht', `Die ${subject} Hausaufgabe bis zum ${day}.${month + 1}. wurde gelöscht`)
+                global.events.emit('editMessage')
+            } else return error(ita, 'Hausaufgabe nicht gefunden', 'Die angegebene Hausaufgabe existiert nicht (mehr).')
+        } else {
+            var ha
+            for (const month in require('../../../ha.json')) {
+                for(const day in require('../../../ha.json')[month]) {
+                    for(const subject in require('../../../ha.json')[month][day]) {
+                        if(args.id.value == require('../../../ha.json')[month][day][subject].id) {
+                            ha = require('../../../ha.json')[month][day][subject]
+                            ha.month = month
+                            ha.day = day
+                            ha.subject = subject
+                            break
+                        }
+                    }
+                    if(ha) break
+                }
+                if(ha) break
             }
+            if(!ha) return require('../../../embeds').error(ita, 'Hausaufgabe nicht gefunden', 'Die angegebene Hausaufgabe existiert nicht (mehr).')
+            let embed = new discord.MessageEmbed()
+                .setTitle('Hausaufgabe ID: '+ ha.id)
+                .setDescription(`Informationen zur ${ha.subject} Hausaufgabe für den ${ha.day}.${ha.month + 1}.`)
+                .addField('Aufgabe', ha.todo)
+                .setColor(client.color.lightblue)
+            if(ha.extra) embed.addField('Zusätzliche Informationen', ha.extra)
+            ita.editReply({ embeds: [embed], ephemeral: true })
         }
     }
 }

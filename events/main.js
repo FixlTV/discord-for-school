@@ -10,8 +10,8 @@ module.exports = {
         setInterval(async () => {
             const config = require('../config.json')
             const d = new Date()
-            if((d.getHours() == config.sendtime && (d.getMinutes() < dold.getMinutes())) || client.triggermessage) {
-
+            if((d.getHours() == config.sendtime && (d.getMinutes() < dold.getMinutes()))) {
+                global.events.emit('editMessage')
             }
             dold = new Date()
         }, 30000, dold)

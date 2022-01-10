@@ -281,6 +281,7 @@ module.exports = {
             if(testtype === "Schulaufgabe" || "Ex") e = 'e'
             let text = 'Test'
             if(testtype === "Schulaufgabe" || "Ex") text = testtype
+            global.events.emit('editMessage')
             return success(ita, `${text} hinzugefügt`, `Ein${e} ${subject} ${text} wurde am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} hinzugefügt.`)
         } else {
             var subject = resolveSubject(args['fach'].value)
@@ -301,6 +302,7 @@ module.exports = {
             delete test[date.getMonth()][date.getDate()][subject]
             if(test[date.getMonth()][date.getDate()] == {}) delete test[date.getMonth()][date.getDate()]
             await fs.writeFile('test.json', JSON.stringify(test))
+            global.events.emit('editMessage')
             return success(ita, `${text} gelöscht`, `${e} ${subject} ${text} am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} wurde gelöscht.`)
         }
     }

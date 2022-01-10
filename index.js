@@ -33,16 +33,17 @@ client.on('ready', async () => {
     client.color = config.color
     client.stundenplan = require('./stundenplan.json')
     client.slashCommands = new discord.Collection()
-    client.triggermessage = true
 
     //fetch the daily logging channel
     client.channel = await client.channels.fetch(config.channel)
+    await client.channel.messages.fetch()
 
     //do more useless stuff
     client.setMaxListeners(0)
     global.events = new Emitter()
 
     require('./execute')()
+    global.events.emit('editMessage', client)
     await require('./commandhandler')(client)
     await slashhandler(client)
     await eventhandler(client)

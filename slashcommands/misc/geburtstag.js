@@ -45,6 +45,7 @@ module.exports = {
             await ita.deferReply({ ephemeral: true })
             await require('fs/promises').writeFile('userdata.json', JSON.stringify(userdata))
             success(ita, 'Geburtstag gelöscht', 'Dein Geburtstag wurde aus dem System gelöscht.')
+            global.events.emit('editMessage')
         } else if(ita.options.getSubcommand() === 'set') {
             await ita.deferReply({ ephemeral: true })
             if(!userdata[ita.user.id]) userdata[ita.user.id] = {}
@@ -56,7 +57,7 @@ module.exports = {
             let months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
             await require('fs/promises').writeFile('userdata.json', JSON.stringify(userdata))
             success(ita, 'Geburtstag gespeichert', `Dein Geburtstag wurde am ${d.getDate()}. ${months[d.getMonth()]} gespeichert.`)
+            global.events.emit('editMessage')
         }
-        return ita
     }
 }
