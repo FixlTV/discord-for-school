@@ -22,7 +22,7 @@ Der "Code" hier ist relativ hässlich und nicht unbedingt optimal. Dieses Projek
     "channel": "Discord Channel ID"   //ID des Channels, in dem das Dashboard angezeigt werden soll
 }
 ```
-### 3 sp.json einrichten
+### 3 stundenplan.json einrichten
 Jeder Tag ist ein Array, in dem jedes Fach, was an dem Tag vorkommt, einmal aufgeführt ist
 ```js
 {
