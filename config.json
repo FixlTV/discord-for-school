@@ -1,0 +1,12 @@
+{
+    "token": "Discord Bot Token",
+    "sendtime": 13,
+    "mods": ["Discord User IDs"],
+    "color": {
+        "red": "0xED4245",
+        "lightblue": "0x3498db",
+        "lime": "0x57F287",
+        "yellow": "0xFEE75C"
+    },
+    "channel": "Discord Channel ID"
+}

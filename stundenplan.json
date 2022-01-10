@@ -1,0 +1,9 @@
+{
+	"Montag": [ "Informatik", "Sport", "Physik" ],
+	"Dienstag": [ "Biologie", "Mathematik", "Geschichte", "Englisch", "Deutsch" ],
+	"Mittwoch": [ "Sozialkunde", "Französisch", "Latein", "Englisch", "Religion/Ethik", "Wirtschaft und Recht" ],
+	"Donnerstag": [ "Chemie", "Musik", "Kunst", "Mathematik", "Geographie" ],
+	"Freitag": [ "Deutsch", "Chemie", "Physik", "Französisch", "Latein" ],
+	"Samstag": [ "Keine" ],
+	"Sonntag": [ "Keine" ]
+}
