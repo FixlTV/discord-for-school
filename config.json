@@ -1,12 +1,12 @@
 {
-    "token": "Discord Bot Token",
+    "token": "Nzc3ODcyMzIzNDY5Mzc3NTY2.X7JwDg.-AQ8LOnJtXemKlRn6YkU5cSXyN4",
     "sendtime": 13,
-    "mods": ["Discord User IDs"],
+    "mods": [514089658833960963, 762979498438164541],
     "color": {
         "red": "0xED4245",
         "lightblue": "0x3498db",
         "lime": "0x57F287",
         "yellow": "0xFEE75C"
     },
-    "channel": "Discord Channel ID"
+    "channel": "778539284319436800"
 }
