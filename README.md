@@ -7,7 +7,7 @@ Der "Code" hier ist relativ hässlich und nicht unbedingt optimal. Dieses Projek
 ## Installation
 ### 1 Repository clonen
 `git clone https://github.com/FixlTV/discord-for-school`
-### 2 config.json ändern
+### 2 config.json erstellen
 ```js
 {
     "token": "Discord Bot Token",     //Token des Bots
@@ -22,7 +22,7 @@ Der "Code" hier ist relativ hässlich und nicht unbedingt optimal. Dieses Projek
     "channel": "Discord Channel ID"   //ID des Channels, in dem das Dashboard angezeigt werden soll
 }
 ```
-### 3 stundenplan.json einrichten
+### 3 stundenplan.json erstellen
 Jeder Tag ist ein Array, in dem jedes Fach, was an dem Tag vorkommt, einmal aufgeführt ist
 ```js
 {
@@ -35,6 +35,19 @@ Jeder Tag ist ein Array, in dem jedes Fach, was an dem Tag vorkommt, einmal aufg
 	"Sonntag": [ "Keine" ]
 }
 ```
+### 4 noch mehr JSON
+`test.json`, `ha.json` und `userdata.json`: 
+```json
+{}
+```
+`data.json`:
+```json
+{"haid":0}
+```
+### 5 Node Modules installieren
+```
+npm i
+```
 
 ## Verwendung
-Mehr dazu vielleicht bald im Wiki
+-> [Wiki](https://github.com/FixlTV/discord-for-school/wiki)
