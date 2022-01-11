@@ -35,8 +35,8 @@ module.exports = {
         var geburtstage = []
         for(var k in userdata) {
             var key = k
-            if (userdata[key].gb && userdata[key].gb.day == datum.getDate()) {
-                if(userdata[key].gb.month == datum.getMonth() + 1) {
+            if (userdata[key].gb && userdata[key].gb.day == date.getDate()) {
+                if(userdata[key].gb.month == date.getMonth() + 1) {
                     geburtstage.push(`<@${key}>`)
                 }
             }
