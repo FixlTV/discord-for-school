@@ -38,3 +38,6 @@ Jeder Tag ist ein Array, in dem jedes Fach, was an dem Tag vorkommt, einmal aufg
 
 ## Verwendung
 Mehr dazu vielleicht bald im Wiki
+
+## Noch eine wichtige Information
+Es kommt noch was... Bald...
