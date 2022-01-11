@@ -57,7 +57,7 @@ module.exports = {
         }
         var haArray = []
         for(let ha in has[month]?.[day]) {
-            haArray.push(`**[${has[month][day][ha].id}]** | __${ha}__: ${has[month][day][ha].todo}`)
+            haArray.push(`**[${has[month][day][ha].id}]** | __${ha}__: ${has[month][day][ha].todo.replaceAll('\n', ' ')}`)
         }
         if(haArray.length > 0) embed.addField('Hausaufgaben', haArray.join('\n'))
         await ita.editReply({ embeds: [embed] })

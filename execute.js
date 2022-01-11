@@ -46,7 +46,7 @@ module.exports = () => global.events.on('editMessage', async (inputClient) => {
     }
     let haArray = []
     for(let ha in has[month]?.[date]) {
-        haArray.push(`**[${has[month][date][ha].id}]** | __${ha}__: ${has[month][date][ha].todo}`)
+        haArray.push(`**[${has[month][date][ha].id}]** | __${ha}__: ${has[month][date][ha].todo.replaceAll('\n', ' ')}`)
     }
     if(haArray.length > 0) embed.addField('Hausaufgaben', haArray.join('\n'))
     if(client.channel.lastMessage?.editable) {
