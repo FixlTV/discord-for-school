@@ -245,94 +245,8 @@ module.exports = {
             description: 'Entfernt eine Hausaufgabe für ein bestimmtes Datum.',
             options: [
                 {
-                    name: 'fach',
-                    description: 'Fach, in dem der Test geschrieben wird',
-                    type: 'STRING',
-                    required: true,
-                    choices: [
-                        {
-                            name: 'Deutsch',
-                            value: '1'
-                        },
-                        {
-                            name: 'Mathematik',
-                            value: '2'
-                        },
-                        {
-                            name: 'Englisch',
-                            value: '3'
-                        },
-                        {
-                            name: 'Physik',
-                            value: '4'
-                        },
-                        {
-                            name: 'Chemie',
-                            value: '5'
-                        },
-                        {
-                            name: 'Biologie',
-                            value: '6'
-                        },
-                        {
-                            name: 'Informatik',
-                            value: '7'
-                        },
-                        {
-                            name: 'Evangelisch',
-                            value: '8'
-                        },
-                        {
-                            name: 'Katholisch',
-                            value: '9'
-                        },
-                        {
-                            name: 'Ethik',
-                            value: '10'
-                        },
-                        {
-                            name: 'Französisch',
-                            value: '11'
-                        },
-                        {
-                            name: 'Latein',
-                            value: '12'
-                        },
-                        {
-                            name: 'Geographie',
-                            value: '13'
-                        },
-                        {
-                            name: 'Geschichte',
-                            value: '14'
-                        },
-                        {
-                            name: 'Wirtschaft und Recht',
-                            value: '15'
-                        },
-                        {
-                            name: 'Sozialkunde',
-                            value: '16'
-                        },
-                        {
-                            name: 'Musik',
-                            value: '17'
-                        },
-                        {
-                            name: 'Kunst',
-                            value: '18'
-                        }
-                    ]
-                },
-                {
-                    name: 'tag',
-                    description: 'Fälligkeitsdatum',
-                    type: 'INTEGER',
-                    required: true
-                },
-                {
-                    name: 'monat',
-                    description: 'Fälligkeitsdatum',
+                    name: 'id',
+                    description: 'ID der Hausaufgabe',
                     type: 'INTEGER',
                     required: true
                 }
@@ -446,23 +360,28 @@ module.exports = {
             await fs.writeFile('data.json', JSON.stringify(data))
             global.events.emit('editMessage')
         } else if(ita.options.getSubcommand() == 'remove') {
-            var subject = resolveSubject(args['fach'].value)
-            var day = args['tag'].value
-            var month = Number(args['monat'].value) - 1
-            var date = new Date()
-            if(!(1 <= month <= 12)) return error(ita, 'Syntaxfehler', '`Monat` muss eine Zahl zwischen 1 und 12 sein.')
-            date.setMonth(month, day)
-            date.setHours(0, 0, 0, 0)
-            if(Date.now() >= date.getTime()) date.setFullYear(date.getFullYear() + 1)
-            month = date.getMonth()
-            day = date.getDate()
-            var has = require('../../../ha.json')
-            if(has[month]?.[day]?.[subject]) {
-                delete has[month][day][subject]
-                await fs.writeFile('ha.json', JSON.stringify(has))
-                success(ita, 'Hausaufgabe gelöscht', `Die ${subject} Hausaufgabe bis zum ${day}.${month + 1}. wurde gelöscht`)
-                global.events.emit('editMessage')
-            } else return error(ita, 'Hausaufgabe nicht gefunden', 'Die angegebene Hausaufgabe existiert nicht (mehr).')
+            var ha
+            for (const month in require('../../../ha.json')) {
+                for(const day in require('../../../ha.json')[month]) {
+                    for(const subject in require('../../../ha.json')[month][day]) {
+                        if(args.id.value == require('../../../ha.json')[month][day][subject].id) {
+                            ha = require('../../../ha.json')[month][day][subject]
+                            ha.month = month
+                            ha.day = day
+                            ha.subject = subject
+                            break
+                        }
+                    }
+                    if(ha) break
+                }
+                if(ha) break
+            }
+            if(!ha) return require('../../../embeds').error(ita, 'Hausaufgabe nicht gefunden', 'Die angegebene Hausaufgabe existiert nicht (mehr).')
+            let has = require('../../../ha.json')
+            delete has[ha.month][ha.day][ha.subject]
+            await fs.writeFile('ha.json', JSON.stringify(has))
+            success(ita, 'Hausaufgabe gelöscht', `Die ${ha.subject} Hausaufgabe bis zum ${ha.day}.${ha.month + 1}. wurde gelöscht`)
+            global.events.emit('editMessage')
         } else {
             var ha
             for (const month in require('../../../ha.json')) {
