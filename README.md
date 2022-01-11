@@ -28,10 +28,15 @@ Aktuell müssen `slashcommands/main/hausaufgaben/ha.js` und `slashcommands/main/
 ```
 npm i
 ```
-### 4 node index
+### 4 Setup Assistant starten
+```
+node .
+```
 Alle anderen erforderlichen Dateien werden automatisch mit dem Setup Assistant erstellt.  
 Die `config.json` benötigt Userinput, um z.B. den Token festzulegen.  
 Nach Abschluss des Setup Assistant wird der Bot automatisch gestartet.
 
 ## Verwendung
 -> [Wiki](https://github.com/FixlTV/discord-for-school/wiki)
+## Bot starten
+Nach dem Setup kann der Bot mit `node .` gestartet werden.
