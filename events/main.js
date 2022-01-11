@@ -17,6 +17,8 @@ module.exports = {
                 let ha = require('../ha.json')
                 if(test[dold.getMonth()]?.[dold.getDate()]) delete test[dold.getMonth()]?.[dold.getDate()]
                 if(ha[dold.getMonth()]?.[dold.getDate()]) delete ha[dold.getMonth()]?.[dold.getDate()]
+                fs.writeFileSync('test.json', JSON.stringify(test))
+                fs.writeFileSync('ha.json', JSON.stringify(ha))
             }
             dold = new Date()
         }, 30000, dold)
