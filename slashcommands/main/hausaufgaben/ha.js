@@ -350,8 +350,8 @@ module.exports = {
             if(!has[month]) has[month] = {}
             if(!has[month][day]) has[month][day] = {}
             has[month][day][subject] = {
-                todo: todo.replaceAll(',', ',\n').replaceAll(';', ),
-                extra: extra,
+                todo: todo.replaceAll(',', ',\n').replaceAll(';', ',\n'),
+                extra: extra.replaceAll(',', ',\n').replaceAll(';', ',\n'),
                 id: data.haid
             }
             await fs.writeFile('ha.json', JSON.stringify(has))

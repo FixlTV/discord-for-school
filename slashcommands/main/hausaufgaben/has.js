@@ -61,7 +61,7 @@ module.exports = {
         if(text.length == 0) text.push('Es gibt aktuell keine Hausaufgaben :D')
         let embed = new discord.MessageEmbed()
             .setColor(client.color.lightblue)
-            .setTitle('~~Hausaufgaben~~')
+            .setTitle('Hausaufgaben')
             .setDescription(`\`\`\`\n${text.join('\n')}\`\`\``)
         await ita.editReply({embeds: [embed]})
     }

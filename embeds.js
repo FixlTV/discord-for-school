@@ -17,54 +17,6 @@ module.exports = {
         else await ita.reply({ embeds: [embed], ephemeral: true })
         return Promise.resolve(ita)
     },
-    dailymsg(msg, weekday, d) {
-        const sp = require('./stundenplan.json')
-        const gb = require('./gb.json')
-        const test = require('./test.json')
-        var message
-        const day = weekday[d.getDay()]
-        const date = d.getDate()
-        const month = d.getMonth() + 1
-        const year = d.getFullYear()
-        const data = sp[day]
-        var embed = new discord.MessageEmbed()
-            .setColor(color.lightblue)
-            .setTitle(day)
-            .setDescription(`Informationen zu **${day}**, den **${date}.${month}.${year}**`)
-            .addField('Fächer:', data)
-        var geburtstage = []
-        for (var k in gb) {
-            var key = k
-            if(gb[key].day == date) {
-                if(gb[key].month == month) {
-                    geburtstage.push(`<@${key}>`)
-                }
-            }
-        }
-        if(geburtstage.join('') == '') {
-        } else {
-            embed.addField('Geburtstage', geburtstage)
-        }
-        if(test[month - 1][date]) {
-            var tests = []
-            var temp = 0
-            for (var s in test[month - 1][date]) {
-                var subject = s
-                tests.push(`**${subject}**: ${test[month - 1][date][subject]}`)
-                temp = 1
-            }
-            if(temp == 1) {
-                embed.addField('Tests', tests)
-                embed.setColor(color.red)
-            }
-        }
-        msg.delete()
-        msg.channel.send(embed).then((msg) => {
-            message = msg
-        })
-
-        return Promise.resolve(message)
-    },
     /**
      * 
      * @param {discord.CommandInteraction} ita 
