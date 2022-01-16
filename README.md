@@ -6,8 +6,11 @@ Der "Code" hier ist relativ hässlich und nicht unbedingt optimal. Dieses Projek
 (Darum gibts jetzt auch ein vereinfachtes Setup, gar nicht ironisch)
 
 ## Installation
-### 1 Repository clonen
+### 1 Vorbereitung
+#### Repository clonen
 `git clone https://github.com/FixlTV/discord-for-school`
+#### Discord Bot
+Der verwendete Bot benötigt Application Command Permissions und keine Privileged Gateway Intents.
 
 ### 2 stundenplan.json erstellen
 Jeder Tag ist ein Array, in dem jedes Fach, was an dem Tag vorkommt, einmal aufgeführt ist.  
