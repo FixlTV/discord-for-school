@@ -20,8 +20,7 @@ npm i
 ```
 node .
 ```
-Alle anderen erforderlichen Dateien werden automatisch mit dem Setup Assistant erstellt.  
-Die `config.json` benötigt Userinput, um z.B. den Token festzulegen.  
+Alle anderen erforderlichen Dateien werden mithilfe des Setup Assistant erstellt.  
 Nach Abschluss des Setup Assistant wird der Bot automatisch gestartet (Errors kommen, wenn man das Setup trotz Assistant verkackt hat).
 
 Danach kann der Bot mit `node .` gestartet werden.
