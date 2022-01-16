@@ -10,34 +10,20 @@ Der "Code" hier ist relativ hässlich und nicht unbedingt optimal. Dieses Projek
 #### Repository clonen
 `git clone https://github.com/FixlTV/discord-for-school`
 #### Discord Bot
-Der verwendete Bot benötigt Application Command Permissions und keine Privileged Gateway Intents.
+Der verwendete Bot benötigt das Application Command und Bot Scope, keine Privileged Gateway Intents und mindestens Send Messages Permissions.
 
-### 2 stundenplan.json erstellen
-Jeder Tag ist ein Array, in dem jedes Fach, was an dem Tag vorkommt, einmal aufgeführt ist.  
-Aktuell müssen `slashcommands/main/hausaufgaben/ha.js` und `slashcommands/main/tests/test.js` überarbeitet werden, wenn andere Fächer verwendet werden wollen.
-```js
-{
-	"Montag": [ "Informatik", "Sport", "Physik" ],
-	"Dienstag": [ "Biologie", "Mathematik", "Geschichte", "Englisch", "Deutsch" ],
-	"Mittwoch": [ "Sozialkunde", "Französisch", "Latein", "Englisch" ],
-	"Donnerstag": [ "Chemie", "Musik", "Kunst", "Mathematik", "Geographie" ],
-	"Freitag": [ "Deutsch", "Chemie", "Physik", "Französisch", "Latein" ],
-	"Samstag": [ "Keine" ],
-	"Sonntag": [ "Keine" ]
-}
-```
-
-### 3 Node Modules installieren
+### 2 Node Modules installieren
 ```
 npm i
 ```
-### 4 Setup Assistant starten
+### 3 Setup Assistant starten
 ```
 node .
 ```
 Alle anderen erforderlichen Dateien werden automatisch mit dem Setup Assistant erstellt.  
 Die `config.json` benötigt Userinput, um z.B. den Token festzulegen.  
-Nach Abschluss des Setup Assistant wird der Bot automatisch gestartet.
+Nach Abschluss des Setup Assistant wird der Bot automatisch gestartet (Errors kommen, wenn man das Setup trotz Assistant verkackt hat).
+
 Danach kann der Bot mit `node .` gestartet werden.
 
 ## Verwendung
