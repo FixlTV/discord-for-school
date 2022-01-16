@@ -3,7 +3,7 @@ const client  = new discord.Client({ intents: 1 << 14 })
 const fs = require('fs');
 
 (async () => {
-    if(!fs.existsSync('./test.json') || !fs.existsSync('./ha.json') || !fs.existsSync('./userdata.json') || !fs.existsSync('./data.json') || !fs.existsSync('./config.json')) await require('./setup.js')()
+    if(!fs.existsSync('./test.json') || !fs.existsSync('./ha.json') || !fs.existsSync('./userdata.json') || !fs.existsSync('./data.json') || !fs.existsSync('./config.json') || !fs.existsSync('./stundenplan.json')) await require('./setup.js')()
     const config  = require('./config.json')
     const eventhandler = require('./eventhandler')
     const slashhandler = require('./slashhandler')

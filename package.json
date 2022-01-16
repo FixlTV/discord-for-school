@@ -1,4 +1,22 @@
 {
+  "name": "discord-for-school",
+  "description": "Discord Bot für einfachere Organisation in der Schule. System basiert auf dem Bayerischen Lehrplan für naturwissenschaftlich-technische Gymnasien (G8, 10. Klasse) lässt sich jedoch durch Anpassungen auf andere Fächerkombinationen umstellen.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FixlTV/discord-for-school.git"
+  },
+  "author": "FixlTV",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/FixlTV/discord-for-school/issues"
+  },
+  "homepage": "https://github.com/FixlTV/discord-for-school#readme",
   "dependencies": {
     "axios": "^0.21.4",
     "delay": "^5.0.0",

@@ -36,7 +36,6 @@ module.exports = async () => {
 
     if(!fs.existsSync('./config.json')) {
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'config.json wird angelegt.')
-        console.log('\x1b[93m%s\x1b[0m', '[!]', 'Eingreifen erforderlich!')
 
         async function getToken() {
             let token = await question('\x1b[93m[!]\x1b[0m Bitte Bot Token eingeben\n >  ')
@@ -118,11 +117,48 @@ module.exports = async () => {
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'config.json wurde erfolgreich angelegt.')
     }
 
-    if(!fs.existsSync('./stundenplan.json')) fs.writeFileSync('./stundenplan.json', '{"Montag": [], "Dienstag": [], "Mittwoch": [], "Donnerstag": [], "Freitag": []}')
+    if(!fs.existsSync('./stundenplan.json')) {
+        let create = await ynQuestion('\x1b[93m[!]\x1b[0m Stundenplan anlegen?')
+        if(create) {
+            console.log('\x1b[92m%s\x1b[0m', '[✓]', 'stundenplan.json wird angelegt.')
+            fs.writeFileSync('stundenplan.json', '{"Montag": [], "Dienstag": [], "Mittwoch": [], "Donnerstag": [], "Freitag": [], "Samstag": [], "Sonntag": []}')
+            console.log('\x1b[93m%s\x1b[0m', '[!]', 'Bitte jedes Fach für jeden Tag \x1b[1meinmal\x1b[0m eingeben. Zum Speichern des Tages "Enter" drücken.\n    Nach dem Speichern eines Tages kann er nicht weiter bearbeitet werden.')
+    
+            const weekday = [ 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag' ]
+
+            for (const day of weekday) {
+                console.log('\x1b[93m[!]\x1b[0m', 'Bitte Fächer für', day, 'eingeben')
+
+                async function newSubject() {
+                    let fach = await question('\x1b[93m[!]\x1b[0m Bitte Fach eingeben\n >  ')
+                    if(fach && fach.trim().match(/[\w -]+/g)) {
+                        let stundenplan = require('./stundenplan.json')
+                        if(!stundenplan[day]) stundenplan[day] = []
+                        stundenplan[day].push(fach.trim())
+                        fs.writeFileSync('./stundenplan.json', JSON.stringify(stundenplan, null, 4))
+                        await newSubject()
+                    } else if(fach?.trim()) {
+                        console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib ein Fach an (Nur Buchstaben, Zahlen, Unter-/Bindestriche und Leerzeichen)')
+                        await newSubject()
+                    } else {
+                        return
+                    }
+                }
+
+                await newSubject()
+                if(!require('./stundenplan.json')[day]) {
+                    let stundenplan = require('./stundenplan.json')
+                    stundenplan[day] = []
+                    fs.writeFileSync('stundenplan.json', JSON.stringify(stundenplan, null, 4))
+                }
+            }
+
+            console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Stundenplan gespeichert')
+        }
+    }
 
     rl.close()
 
     console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Einrichtung abgeschlossen!')
-    console.log('\x1b[93m%s\x1b[0m', '[!]', 'Bitte Fächer in Commands und stundenplan.json eintragen (Funktion wird in Zukunft zum Setup Assistenten hinzugefügt)')
     console.log('\x1b[2m%s\x1b[0m', '----------------------------------------------------------------')
 }
