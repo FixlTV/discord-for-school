@@ -99,6 +99,37 @@ module.exports = async () => {
         await getMods()
         mods = [...new Set(mods)]
 
+        async function getState() {
+            let state = await question('\x1b[93m[!]\x1b[0m Bitte Bundesland-Code oder "?" für eine Liste möglicher Antworten eingeben\n >  ')
+            if(state == '?') {
+                console.log('\x1b[36m[ ]\x1b[0m', 'Bundesland-Codes:')
+                console.log('    BW: Baden-Württemberg')
+                console.log('    BY: Bayern')
+                console.log('    BE: Berlin')
+                console.log('    BB: Brandenburg')
+                console.log('    HB: Bremen')
+                console.log('    HH: Hamburg')
+                console.log('    HE: Hessen')
+                console.log('    MV: Mecklenburg-Vorpommern')
+                console.log('    NI: Niedersachsen')
+                console.log('    NW: Nordrhein-Westfalen')
+                console.log('    RP: Rheinland-Pfalz')
+                console.log('    SL: Saarland')
+                console.log('    SN: Sachsen')
+                console.log('    ST: Sachsen-Anhalt')
+                console.log('    SH: Schleswig-Holstein')
+                console.log('    TH: Thüringen')
+                state = await getState()
+            } else if(['BW', 'BY', 'BE', 'BB', 'HB', 'HH', 'HE', 'NW', 'NI', 'NW', 'RP', 'SL', 'SN', 'ST', 'SH', 'TH'].includes(state.toUpperCase())) return state.toUpperCase()
+            else {
+                console.log('\x1b[91m%s\x1b[0m', '[X]', 'Ungültiger Bundesland-Code! Verwende ? für eine Liste möglicher Antworten.')
+                state = await getState()
+            }
+            return state
+        }
+
+        let state = await getState()
+
         let config = {
             token,
             color: {
@@ -109,7 +140,8 @@ module.exports = async () => {
             },
             mods,
             channel,
-            sendtime: sendTime
+            sendtime: sendTime,
+            state
         }
 
         client.destroy()

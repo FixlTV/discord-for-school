@@ -16,21 +16,21 @@ const fs = require('fs');
         global.holidays = []
         global.feiertage = []
         let d = new Date()
-        axios.get('https://feiertage-api.de/api/?jahr=' + d.getFullYear() + '&nur_land=BY').then(async data => {
+        axios.get('https://feiertage-api.de/api/?jahr=' + d.getFullYear() + '&nur_land=' + config.state).then(async data => {
             data = data.data
             for (const day in data) {
-                if(day !== "Augsburger Friedensfest") global.feiertage.push(data[day].datum)
+                global.feiertage.push(data[day].datum)
             }
         })
-        axios.get('https://feiertage-api.de/api/?jahr=' + (d.getFullYear() + 1) + '&nur_land=BY').then(async data => {
+        axios.get('https://feiertage-api.de/api/?jahr=' + (d.getFullYear() + 1) + '&nur_land=' + config.state).then(async data => {
             data = data.data
             for (const day in data) {
-                if(day !== "Augsburger Friedensfest") global.feiertage.push(data[day].datum)
+                global.feiertage.push(data[day].datum)
             }
         })
-        let holidays = await (await axios.get('https://ferien-api.de/api/v1/holidays/BY/' + d.getUTCFullYear())).data
+        let holidays = await (await axios.get('https://ferien-api.de/api/v1/holidays/' + config.state + '/' + d.getUTCFullYear())).data
         holidays.forEach(h => global.holidays.push(h))
-        holidays = await (await axios.get('https://ferien-api.de/api/v1/holidays/BY/' + (d.getUTCFullYear() + 1))).data
+        holidays = await (await axios.get('https://ferien-api.de/api/v1/holidays/' + config.state + '/' + (d.getUTCFullYear() + 1))).data
         holidays.forEach(h => global.holidays.push(h))
 
         //add useless properties to the client
