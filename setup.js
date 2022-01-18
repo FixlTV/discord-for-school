@@ -6,6 +6,31 @@ module.exports = async () => {
     console.log('\x1b[36m%s\x1b[0m', 'Willkommen beim Setup Assistenten!');
     const client = new Client({ intents: ['DIRECT_MESSAGES'] })
     console.log('Alle erforderlichen Daten werden nun angelegt.')
+
+    if(!fs.existsSync('./data')) fs.mkdirSync('./data');
+
+    console.log('\x1b[2m%s\x1b[0m', '[ ]', 'System wird nach alten Dateien durchsucht.')
+    if(fs.existsSync('./test.json')) {
+        fs.writeFileSync('data/test.json', fs.readFileSync('test.json'))
+        fs.unlinkSync('test.json')
+        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'test.json wurde erfolgreich nach data/test.json verschoben.')
+    }
+    if(fs.existsSync('./ha.json')) {
+        fs.writeFileSync('data/ha.json', fs.readFileSync('ha.json'))
+        fs.unlinkSync('ha.json')
+        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'ha.json wurde erfolgreich nach data/ha.json verschoben.')
+    }
+    if(fs.existsSync('./userdata.json')) {
+        fs.writeFileSync('data/userdata.json', fs.readFileSync('userdata.json'))
+        fs.unlinkSync('userdata.json')
+        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'userdata.json wurde erfolgreich nach data/userdata.json verschoben.')
+    }
+    if(fs.existsSync('./data.json')) {
+        fs.writeFileSync('data/data.json', fs.readFileSync('data.json'))
+        fs.unlinkSync('data.json')
+        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'data.json wurde erfolgreich nach data/data.json verschoben.')
+    }
+
     if(!fs.existsSync('./data/test.json')) {
         fs.writeFileSync('./data/test.json', '{}')
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'test.json wurde angelegt.')
@@ -208,8 +233,8 @@ module.exports = async () => {
             console.log('    Bitte beachte, das Discord Choices maximal 25 Optionen unterstützen kann.')
             console.log('    Die Einrichtung wird unterbrochen und der Stundenplan deaktiviert.')
             fs.writeFileSync('data/stundenplan.save.json', fs.writeFileSync('data/stundenplan.json'))
-            fs.rmSync('data/stundenplan.json')
-            fs.rmSync('data/subjects.json')
+            fs.unlinkSync('data/stundenplan.json')
+            fs.unlinkSync('data/subjects.json')
             process.exit(-1)
         }
 
