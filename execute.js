@@ -1,4 +1,5 @@
 const discord = require('discord.js');
+const config = require('./config')
 
 var client
 
@@ -17,7 +18,7 @@ module.exports = () => global.events.on('editMessage', async (inputClient) => {
     weekday[6] = "Samstag";
 
     var datum = new Date()
-    datum.setDate(datum.getDate() + 1)
+    if(datum.getHours > config.sendtime) datum.setDate(datum.getDate() + 1)
     var day = weekday[datum.getDay()]
     var month = datum.getMonth()
     var date = datum.getDate()
@@ -49,10 +50,10 @@ module.exports = () => global.events.on('editMessage', async (inputClient) => {
         haArray.push(`**[${has[month][date][ha].id}]** | __${ha}__: ${has[month][date][ha].todo.replaceAll('\n', ' ')}`)
     }
     if(haArray.length > 0) embed.addField('Hausaufgaben', haArray.join('\n'))
-    if(client.channel.lastMessage?.editable) {
-        await client.channel.lastMessage.edit({ embeds: [embed] })
+    if(client.message?.editable) {
+        client.message = await client.message.edit({ embeds: [embed] })
     } else {
         await client.channel.bulkDelete(100).catch(() => {})
-        await client.channel.send({ embeds: [embed] }).catch(() => {})
+        client.message = await client.channel.send({ embeds: [embed] }).catch(() => {})
     }
 })

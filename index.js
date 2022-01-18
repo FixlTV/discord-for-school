@@ -41,6 +41,8 @@ const fs = require('fs');
         //fetch the daily logging channel
         client.channel = await client.channels.fetch(config.channel)
         await client.channel.messages.fetch()
+        client.message = null
+        if(client.channel.lastMessage?.editable) client.message = client.channel.lastMessage
 
         //do more useless stuff
         client.setMaxListeners(0)
