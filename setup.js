@@ -30,6 +30,11 @@ module.exports = async () => {
         fs.unlinkSync('data.json')
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'data.json wurde erfolgreich nach data/data.json verschoben.')
     }
+    if(fs.existsSync('./stundenplan.json')) {
+        fs.writeFileSync('data/stundenplan.json', fs.readFileSync('stundenplan.json'))
+        fs.unlinkSync('stundenplan.json')
+        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'stundenplan.json wurde erfolgreich nach data/stundenplan.json verschoben.')
+    }
 
     if(!fs.existsSync('./data/test.json')) {
         fs.writeFileSync('./data/test.json', '{}')
