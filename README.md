@@ -3,7 +3,7 @@ Discord Bot für einfachere Organisation in der Schule. System basiert auf dem B
 
 ## Wichtige Information
 Der "Code" hier ist relativ hässlich und nicht unbedingt optimal. Dieses Projekt gammelt seit einem Jahr im letzten Eck meiner Festplatte und ich habe aktuell wenig Motivation, ihn zu verbessern. Es gibt viele Dinge, die ich im Nachhinein ändern würde (u.a. was die JSON Files angeht), aber wie gesagt, einfach keine Lust. Vielleicht kommen in Zukunft noch ein paar Änderungen, aber nach einem halben Jahr nichts am Code verändern, weiß ich nur noch bedingt, was ich mir damals gedacht hab :)  
-(Darum gibts jetzt auch ein vereinfachtes Setup, gar nicht ironisch)
+(Darum gibts jetzt auch ein vereinfachtes Setup, gar nicht ironisch)  
 **ACHTUNG**: Aktuell werden Fächer nicht automatisch erstellt/geladen und müssen zur Verwendung in jedem Command einzeln geändert werden.
 
 ## Installation
