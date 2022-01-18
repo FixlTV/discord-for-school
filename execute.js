@@ -18,7 +18,7 @@ module.exports = () => global.events.on('editMessage', async (inputClient) => {
     weekday[6] = "Samstag";
 
     var datum = new Date()
-    if(datum.getHours > config.sendtime) datum.setDate(datum.getDate() + 1)
+    if(datum.getHours() > config.sendtime) datum.setDate(datum.getDate() + 1)
     var day = weekday[datum.getDay()]
     var month = datum.getMonth()
     var date = datum.getDate()
