@@ -48,24 +48,7 @@ module.exports = {
                     description: 'Art des Tests, der geschrieben wird',
                     type: 'STRING',
                     required: true,
-                    choices: [
-                        {
-                            name: 'Schulaufgabe',
-                            value: 'Schulaufgabe'
-                        },
-                        {
-                            name: 'Test',
-                            value: 'Test'
-                        },
-                        {
-                            name: 'Ex',
-                            value: 'Ex'
-                        },
-                        {
-                            name: 'Sonstige',
-                            value: 'Unbekannt'
-                        }
-                    ]
+                    choices: require("../../../data/testtypes.json")
                 },
                 {
                     name: 'tag',
@@ -131,12 +114,7 @@ module.exports = {
             if(!test[date.getMonth()][date.getDate()]) test[date.getMonth()][date.getDate()] = {}
             test[date.getMonth()][date.getDate()][subject] = testtype
             await fs.writeFile('data/test.json', JSON.stringify(test))
-            let e = ''
-            if(testtype === "Schulaufgabe" || "Ex") e = 'e'
-            let text = 'Test'
-            if(testtype === "Schulaufgabe" || "Ex") text = testtype
-            global.events.emit('editMessage')
-            return success(ita, `${text} hinzugefügt`, `Ein${e} ${subject} ${text} wurde am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} hinzugefügt.`)
+            return success(ita, `${text} hinzugefügt`, `Ein ${subject} Test (${text}) wurde am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} hinzugefügt.`)
         } else {
             var subject = resolveSubject(args['fach'].value)
             var day = args['tag'].value
@@ -149,10 +127,6 @@ module.exports = {
             var test = require('../../../data/test.json')
             if(!test[date.getMonth()] || !test[date.getMonth()][date.getDate()] || !test[date.getMonth()][date.getDate()][subject]) return error(ita, 'Fehler', `An diesem Tag wird kein ${subject} Test geschrieben.`)
             let testtype = test[date.getMonth()][date.getDate()][subject]
-            let e = 'Der'
-            if(testtype === "Schulaufgabe" || "Ex") e = 'Die'
-            let text = 'Test'
-            if(testtype === "Schulaufgabe" || "Ex") text = testtype
             delete test[date.getMonth()][date.getDate()][subject]
             if(test[date.getMonth()][date.getDate()] == {}) delete test[date.getMonth()][date.getDate()]
             await fs.writeFile('data/test.json', JSON.stringify(test))

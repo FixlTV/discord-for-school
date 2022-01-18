@@ -235,7 +235,7 @@ module.exports = async () => {
 
         if(subjects.length > 25) {
             console.log('\x1b[91m%s\x1b[0m', '[X]', 'Es wurden mehr als 25 unterschiedliche Fächerbezeichnungen gefunden.')
-            console.log('    Bitte beachte, das Discord Choices maximal 25 Optionen unterstützen kann.')
+            console.log('    Bitte beachte, das Discord Choices maximal 25 Optionen unterstützen können.')
             console.log('    Die Einrichtung wird unterbrochen und der Stundenplan deaktiviert.')
             fs.writeFileSync('data/stundenplan.save.json', fs.writeFileSync('data/stundenplan.json'))
             fs.unlinkSync('data/stundenplan.json')
@@ -244,6 +244,37 @@ module.exports = async () => {
         }
 
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'subjects.json wurde angelegt.')
+    }
+
+    if(!fs.existsSync('data/testtypes.json')) {
+        console.log('\x1b[93m%s\x1b[0m', '[!]', 'Bitte gib Möglichkeiten der (optimalerweise angesagten) Leistungserhebung an (Arbeit, Test, whatever)')
+
+        let testtypes = []
+
+        async function getTypes() {
+            let test = await question('\x1b[93m[!]\x1b[0m Name der Art des Tests eingeben\n >  ')
+            if(test?.trim().match(/[\w -]+/g)) {
+                testtypes.push(test.trim())
+                let proceed = await ynQuestion('\x1b[93m[!]\x1b[0m Weitere Testarten hinzufügen?')
+                if(proceed) await getTypes()
+            } else {
+                console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib eine Testart an (Nur Buchstaben, Zahlen, Unter-/Bindestriche und Leerzeichen)')
+                await getTypes()
+            }
+            return testtypes
+        }
+
+        await getTypes()
+        testtypes = [...new Set(testtypes)]
+        if(testtypes.length > 25) {
+            console.log('\x1b[91m%s\x1b[0m', '[X]', 'Es wurden mehr als 25 unterschiedliche Testarten gefunden.')
+            console.log('    Bitte beachte, das Discord Choices maximal 25 Optionen unterstützen können.')
+            console.log('    Die Einrichtung wird unterbrochen.')
+            process.exit(-1)
+        }
+        testtypes = testtypes.map(test => { return { name: test, value: test }})
+        fs.writeFileSync('data/testtypes.json', JSON.stringify(testtypes))
+        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'testtypes.json wurde angelegt.')
     }
 
     rl.close()
