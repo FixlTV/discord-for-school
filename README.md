@@ -1,5 +1,6 @@
 # discord-for-school
-Discord Bot für einfachere Organisation in der Schule. Fächer können mithilfe des Setup Assistant festgelegt werden, Testbeschreibungen benutzen noch Bayerische Benennungen, hierfür wird bald auch eine Option eingefügt.
+Discord Bot für einfachere Organisation in der Schule. Vollständig variables System mit bis zu 25 Fächern und 25 unterschiedlichen Leistungserhebungsarten (wozu auch immer man die 25 braucht).  
+Beinhaltet tägliche Informationen über am nächsten Tag anstehende Leistungserhebungen, Hausaufgaben, Geburtstage und Fächer und ein paar andere Sachen :)
 
 ## Wichtige Information
 Der "Code" hier ist relativ hässlich und nicht unbedingt optimal. Dieses Projekt gammelt seit einem Jahr im letzten Eck meiner Festplatte und ich habe aktuell wenig Motivation, ihn zu verbessern. Es gibt viele Dinge, die ich im Nachhinein ändern würde (u.a. was die JSON Files angeht), aber wie gesagt, einfach keine Lust. Vielleicht kommen in Zukunft noch ein paar Änderungen, aber nach einem halben Jahr nichts am Code verändern, weiß ich nur noch bedingt, was ich mir damals gedacht hab :)  
