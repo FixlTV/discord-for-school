@@ -12,6 +12,7 @@ test.json
 userdata.json
 ha.json
 stundenplan.json
+data/
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json

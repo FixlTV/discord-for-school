@@ -13,12 +13,12 @@ module.exports = {
                 global.events.emit('editMessage')
             }
             if(dold.getDate() != d.getDate()) {
-                let test = require('../test.json')
-                let ha = require('../ha.json')
+                let test = require('../data/test.json')
+                let ha = require('../data/ha.json')
                 if(test[dold.getMonth()]?.[dold.getDate()]) delete test[dold.getMonth()]?.[dold.getDate()]
                 if(ha[dold.getMonth()]?.[dold.getDate()]) delete ha[dold.getMonth()]?.[dold.getDate()]
-                fs.writeFileSync('test.json', JSON.stringify(test))
-                fs.writeFileSync('ha.json', JSON.stringify(ha))
+                fs.writeFileSync('data/test.json', JSON.stringify(test))
+                fs.writeFileSync('data/ha.json', JSON.stringify(ha))
             }
             dold = new Date()
         }, 30000, dold)

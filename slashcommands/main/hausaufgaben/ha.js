@@ -2,29 +2,6 @@ const discord = require('discord.js')
 const { error, success } = require('../../../embeds')
 const fs = require('fs/promises')
 
-function resolveSubject(int) {
-    return {
-        '1': 'Deutsch',
-        '2': 'Mathematik',
-        '3': 'Englisch',
-        '4': 'Physik',
-        '5': 'Chemie',
-        '6': 'Biologie',
-        '7': 'Informatik',
-        '8': 'Evangelisch',
-        '9': 'Katholisch',
-        '10': 'Ethik',
-        '11': 'Französisch',
-        '12': 'Latein',
-        '13': 'Geographie',
-        '14': 'Geschichte',
-        '15': 'Wirtschaft und Recht',
-        '16': 'Sozialkunde',
-        '17': 'Musik',
-        '18': 'Kunst'
-    }[int]
-}
-
 module.exports = {
     name: 'hausaufgaben',
     description: 'Fügt Hausaufgaben hinzu oder löscht sie.',
@@ -39,80 +16,7 @@ module.exports = {
                     description: 'Fach, in dem der Test geschrieben wird',
                     type: 'STRING',
                     required: true,
-                    choices: [
-                        {
-                            name: 'Deutsch',
-                            value: '1'
-                        },
-                        {
-                            name: 'Mathematik',
-                            value: '2'
-                        },
-                        {
-                            name: 'Englisch',
-                            value: '3'
-                        },
-                        {
-                            name: 'Physik',
-                            value: '4'
-                        },
-                        {
-                            name: 'Chemie',
-                            value: '5'
-                        },
-                        {
-                            name: 'Biologie',
-                            value: '6'
-                        },
-                        {
-                            name: 'Informatik',
-                            value: '7'
-                        },
-                        {
-                            name: 'Evangelisch',
-                            value: '8'
-                        },
-                        {
-                            name: 'Katholisch',
-                            value: '9'
-                        },
-                        {
-                            name: 'Ethik',
-                            value: '10'
-                        },
-                        {
-                            name: 'Französisch',
-                            value: '11'
-                        },
-                        {
-                            name: 'Latein',
-                            value: '12'
-                        },
-                        {
-                            name: 'Geographie',
-                            value: '13'
-                        },
-                        {
-                            name: 'Geschichte',
-                            value: '14'
-                        },
-                        {
-                            name: 'Wirtschaft und Recht',
-                            value: '15'
-                        },
-                        {
-                            name: 'Sozialkunde',
-                            value: '16'
-                        },
-                        {
-                            name: 'Musik',
-                            value: '17'
-                        },
-                        {
-                            name: 'Kunst',
-                            value: '18'
-                        }
-                    ]
+                    choices: require('../../../data/subjects.json')
                 },
                 {
                     name: 'tag',
@@ -150,80 +54,7 @@ module.exports = {
                     description: 'Fach, in dem der Test geschrieben wird',
                     type: 'STRING',
                     required: true,
-                    choices: [
-                        {
-                            name: 'Deutsch',
-                            value: '1'
-                        },
-                        {
-                            name: 'Mathematik',
-                            value: '2'
-                        },
-                        {
-                            name: 'Englisch',
-                            value: '3'
-                        },
-                        {
-                            name: 'Physik',
-                            value: '4'
-                        },
-                        {
-                            name: 'Chemie',
-                            value: '5'
-                        },
-                        {
-                            name: 'Biologie',
-                            value: '6'
-                        },
-                        {
-                            name: 'Informatik',
-                            value: '7'
-                        },
-                        {
-                            name: 'Evangelisch',
-                            value: '8'
-                        },
-                        {
-                            name: 'Katholisch',
-                            value: '9'
-                        },
-                        {
-                            name: 'Ethik',
-                            value: '10'
-                        },
-                        {
-                            name: 'Französisch',
-                            value: '11'
-                        },
-                        {
-                            name: 'Latein',
-                            value: '12'
-                        },
-                        {
-                            name: 'Geographie',
-                            value: '13'
-                        },
-                        {
-                            name: 'Geschichte',
-                            value: '14'
-                        },
-                        {
-                            name: 'Wirtschaft und Recht',
-                            value: '15'
-                        },
-                        {
-                            name: 'Sozialkunde',
-                            value: '16'
-                        },
-                        {
-                            name: 'Musik',
-                            value: '17'
-                        },
-                        {
-                            name: 'Kunst',
-                            value: '18'
-                        }
-                    ]
+                    choices: require('../../../data/subjects.json')
                 },
                 {
                     name: 'todo',
@@ -276,7 +107,7 @@ module.exports = {
         var data = require('../../../data.json')
         await ita.deferReply({ ephemeral: true })
         if(ita.options.getSubcommand() === 'add') {
-            var subject = resolveSubject(args['fach'].value)
+            var subject = args['subject'].value
             var todo = args['todo'].value
             var extra = args['notizen']?.value
             var day = args['tag'].value
@@ -288,7 +119,7 @@ module.exports = {
             if(Date.now() >= date.getTime()) date.setFullYear(date.getFullYear() + 1)
             month = date.getMonth()
             day = date.getDate()
-            var has = require('../../../ha.json')
+            var has = require('../../../data/ha.json')
             if(!has[month]) has[month] = {}
             if(!has[month][day]) has[month][day] = {}
             has[month][day][subject] = {
@@ -296,10 +127,10 @@ module.exports = {
                 extra: extra?.replaceAll(',', ',\n').replaceAll(';', ',\n'),
                 id: data.haid
             }
-            await fs.writeFile('ha.json', JSON.stringify(has))
+            await fs.writeFile('data/ha.json', JSON.stringify(has))
             success(ita, 'Hausaufgabe hinzugefügt', `Die ${subject} Hausaufgabe bis zum ${day}.${month + 1}. wurde gespeichert (ID: ${data.haid})`)
             data.haid ++
-            await fs.writeFile('data.json', JSON.stringify(data))
+            await fs.writeFile('data/data.json', JSON.stringify(data))
             global.events.emit('editMessage')
         } else if(ita.options.getSubcommand() === 'next') {
             var tries = 0
@@ -317,7 +148,7 @@ module.exports = {
                 var weekday = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
                 var d = new Date(date)
                 d.setDate(d.getDate() + 1)
-                var sp = require('../../../stundenplan.json')
+                sp = client.stundenplan
                 while(!sp[weekday[d.getDay()]].includes(subject) && tries < 255) {
                     tries ++
                     d.setDate(d.getDate() + 1)
@@ -346,7 +177,7 @@ module.exports = {
 
             let month = date.getMonth()
             let day = date.getDate()
-            let has = require('../../../ha.json')
+            let has = require('../../../data/ha.json')
             if(!has[month]) has[month] = {}
             if(!has[month][day]) has[month][day] = {}
             has[month][day][subject] = {
@@ -354,18 +185,18 @@ module.exports = {
                 extra: extra?.replaceAll(',', ',\n').replaceAll(';', ',\n'),
                 id: data.haid
             }
-            await fs.writeFile('ha.json', JSON.stringify(has))
+            await fs.writeFile('data/ha.json', JSON.stringify(has))
             success(ita, 'Hausaufgabe hinzugefügt', `Die ${subject} Hausaufgabe bis zum ${day}.${month + 1}. wurde gespeichert (ID: ${data.haid})`)
             data.haid ++
-            await fs.writeFile('data.json', JSON.stringify(data))
+            await fs.writeFile('data/data.json', JSON.stringify(data))
             global.events.emit('editMessage')
         } else if(ita.options.getSubcommand() == 'remove') {
             var ha
-            for (const month in require('../../../ha.json')) {
-                for(const day in require('../../../ha.json')[month]) {
-                    for(const subject in require('../../../ha.json')[month][day]) {
-                        if(args.id.value == require('../../../ha.json')[month][day][subject].id) {
-                            ha = require('../../../ha.json')[month][day][subject]
+            for (const month in require('../../../data/ha.json')) {
+                for(const day in require('../../../data/ha.json')[month]) {
+                    for(const subject in require('../../../data/ha.json')[month][day]) {
+                        if(args.id.value == require('../../../data/ha.json')[month][day][subject].id) {
+                            ha = require('../../../data/ha.json')[month][day][subject]
                             ha.month = month
                             ha.day = day
                             ha.subject = subject
@@ -377,18 +208,18 @@ module.exports = {
                 if(ha) break
             }
             if(!ha) return require('../../../embeds').error(ita, 'Hausaufgabe nicht gefunden', 'Die angegebene Hausaufgabe existiert nicht (mehr).')
-            let has = require('../../../ha.json')
+            let has = require('../../../data/ha.json')
             delete has[ha.month][ha.day][ha.subject]
-            await fs.writeFile('ha.json', JSON.stringify(has))
+            await fs.writeFile('data/ha.json', JSON.stringify(has))
             success(ita, 'Hausaufgabe gelöscht', `Die ${ha.subject} Hausaufgabe bis zum ${ha.day}.${ha.month + 1}. wurde gelöscht`)
             global.events.emit('editMessage')
         } else {
             var ha
-            for (const month in require('../../../ha.json')) {
-                for(const day in require('../../../ha.json')[month]) {
-                    for(const subject in require('../../../ha.json')[month][day]) {
-                        if(args.id.value == require('../../../ha.json')[month][day][subject].id) {
-                            ha = require('../../../ha.json')[month][day][subject]
+            for (const month in require('../../../data/ha.json')) {
+                for(const day in require('../../../data/ha.json')[month]) {
+                    for(const subject in require('../../../data/ha.json')[month][day]) {
+                        if(args.id.value == require('../../../data/ha.json')[month][day][subject].id) {
+                            ha = require('../../../data/ha.json')[month][day][subject]
                             ha.month = month
                             ha.day = day
                             ha.subject = subject

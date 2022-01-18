@@ -6,20 +6,20 @@ module.exports = async () => {
     console.log('\x1b[36m%s\x1b[0m', 'Willkommen beim Setup Assistenten!');
     const client = new Client({ intents: ['DIRECT_MESSAGES'] })
     console.log('Alle erforderlichen Daten werden nun angelegt.')
-    if(!fs.existsSync('./test.json')) {
-        fs.writeFileSync('./test.json', '{}')
+    if(!fs.existsSync('./data/test.json')) {
+        fs.writeFileSync('./data/test.json', '{}')
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'test.json wurde angelegt.')
     }
-    if(!fs.existsSync('./ha.json')) {
-        fs.writeFileSync('./ha.json', '{}')
+    if(!fs.existsSync('./data/ha.json')) {
+        fs.writeFileSync('./data/ha.json', '{}')
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'ha.json wurde angelegt.')
     }
-    if(!fs.existsSync('./userdata.json')) {
-        fs.writeFileSync('./userdata.json', '{}')
+    if(!fs.existsSync('./data/userdata.json')) {
+        fs.writeFileSync('data/userdata.json', '{}')
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'userdata.json wurde angelegt.')
     }
-    if(!fs.existsSync('./data.json')) {
-        fs.writeFileSync('./data.json', '{"haid": 0}')
+    if(!fs.existsSync('./data/data.json')) {
+        fs.writeFileSync('./data/data.json', '{"haid": 0}')
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'data.json wurde angelegt.')
     }
 
@@ -149,7 +149,7 @@ module.exports = async () => {
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'config.json wurde erfolgreich angelegt.')
     }
 
-    if(!fs.existsSync('./stundenplan.json')) {
+    if(!fs.existsSync('data/stundenplan.json')) {
         let create = await ynQuestion('\x1b[93m[!]\x1b[0m Stundenplan anlegen?')
         if(create) {
             console.log('\x1b[92m%s\x1b[0m', '[✓]', 'stundenplan.json wird angelegt.')
@@ -167,6 +167,7 @@ module.exports = async () => {
                         let stundenplan = require('./stundenplan.json')
                         if(!stundenplan[day]) stundenplan[day] = []
                         stundenplan[day].push(fach.trim())
+                        stundenplan[day] = [...new Set(stundenplan[day])]
                         fs.writeFileSync('./stundenplan.json', JSON.stringify(stundenplan, null, 4))
                         await newSubject()
                     } else if(fach?.trim()) {
@@ -178,15 +179,41 @@ module.exports = async () => {
                 }
 
                 await newSubject()
-                if(!require('./stundenplan.json')[day]) {
-                    let stundenplan = require('./stundenplan.json')
+                if(!require('./data/stundenplan.json')[day]) {
+                    let stundenplan = require('./data/stundenplan.json')
                     stundenplan[day] = []
-                    fs.writeFileSync('stundenplan.json', JSON.stringify(stundenplan, null, 4))
+                    fs.writeFileSync('data/stundenplan.json', JSON.stringify(stundenplan, null, 4))
                 }
             }
 
             console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Stundenplan gespeichert')
         }
+    }
+
+    if(!fs.existsSync('./data/subjects.json')) {
+        console.log('\x1b[2m%s\x1b[0m', '[ ]', 'Fächer werden extrahiert')
+
+        var subjects = []
+        for (const day in require('./data/stundenplan.json')) {
+            require('./data/stundenplan.json')[day].forEach(subject => {
+                subjects.push(subject)
+            })
+        }
+        subjects = [...new Set(subjects)]
+        subjects = subjects.map(subject => { return { name: subject, value: subject }})
+        fs.writeFileSync('data/subjects.json', JSON.stringify(subjects))
+
+        if(subjects.length > 25) {
+            console.log('\x1b[91m%s\x1b[0m', '[X]', 'Es wurden mehr als 25 unterschiedliche Fächerbezeichnungen gefunden.')
+            console.log('    Bitte beachte, das Discord Choices maximal 25 Optionen unterstützen kann.')
+            console.log('    Die Einrichtung wird unterbrochen und der Stundenplan deaktiviert.')
+            fs.writeFileSync('data/stundenplan.save.json', fs.writeFileSync('data/stundenplan.json'))
+            fs.rmSync('data/stundenplan.json')
+            fs.rmSync('data/subjects.json')
+            process.exit(-1)
+        }
+
+        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'subjects.json wurde angelegt.')
     }
 
     rl.close()

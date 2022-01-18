@@ -5,9 +5,9 @@ var client
 
 module.exports = () => global.events.on('editMessage', async (inputClient) => {
     if(inputClient) client = inputClient
-    const test = require('./test.json')
-    const has = require('./ha.json')
-    const userdata = require('./userdata.json')
+    const test = require('./data/test.json')
+    const has = require('./data/ha.json')
+    const userdata = require('./data/userdata.json')
     var weekday = new Array(7);
     weekday[0] = "Sonntag";
     weekday[1] = "Montag";

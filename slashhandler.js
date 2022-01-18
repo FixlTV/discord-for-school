@@ -21,15 +21,6 @@ module.exports = async function (client) {
                 if(typeof command.permissions === 'string') command.permissions = [command.permissions]
                 if(command.name) {
                     console.log(`[${client.user.username}]: ${command.name} wird geladen...`)
-                    if(command.permissions) validatePermissions(command, command.permissions)
-                    commands.push(command)
-                    client.slashCommands.set(command.name, command)
-                }
-                if(!command.name && command.commands) {
-                    if(typeof command.commands === 'string') command.commands = [command.commands]
-                    command.name = command.commands.shift()
-                    console.log(`[${client.user.username}]: ${command.name} wird geladen...`)
-                    if(command.permissions) validatePermissions(command, command.permissions)
                     commands.push(command)
                     client.slashCommands.set(command.name, command)
                 }

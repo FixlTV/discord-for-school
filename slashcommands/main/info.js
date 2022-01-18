@@ -28,9 +28,9 @@ module.exports = {
         month = date.getMonth()
         day = date.getDate()
 
-        const userdata = require('../../userdata.json')
-        const test = require('../../test.json')
-        const has = require('../../ha.json')
+        const userdata = require('../../data/userdata.json')
+        const test = require('../../data/test.json')
+        const has = require('../../data/ha.json')
 
         var geburtstage = []
         for(var k in userdata) {
