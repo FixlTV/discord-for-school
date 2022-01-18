@@ -131,7 +131,7 @@ module.exports = {
             if(test[date.getMonth()][date.getDate()] == {}) delete test[date.getMonth()][date.getDate()]
             await fs.writeFile('data/test.json', JSON.stringify(test))
             global.events.emit('editMessage')
-            return success(ita, `${text} gelöscht`, `${e} ${subject} ${text} am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} wurde gelöscht.`)
+            return success(ita, `${text} gelöscht`, `Der ${subject} Test (${testtype}) am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} wurde gelöscht.`)
         }
     }
 }
