@@ -71,6 +71,43 @@ module.exports = {
             ]
         },
         {
+            name: 'edit',
+            type: 'SUB_COMMAND',
+            description: 'Bearbeitet Informationen zu einer Hausaufgabe.',
+            options: [
+                {
+                    name: 'id',
+                    description: 'ID der Hausaufgabe',
+                    type: 'INTEGER',
+                    required: true
+                },
+                {
+                    name: 'tag',
+                    description: 'Fälligkeitsdatum',
+                    type: 'INTEGER',
+                    required: false
+                },
+                {
+                    name: 'monat',
+                    description: 'Fälligkeitsdatum',
+                    type: 'INTEGER',
+                    required: false
+                },
+                {
+                    name: 'todo',
+                    description: 'Kurze Beschreibung, was zu tun ist.',
+                    type: 'STRING',
+                    required: false
+                },
+                {
+                    name: 'notizen',
+                    description: 'Platz für zusätzliche Hinweise, Notizen, etc',
+                    type: 'STRING',
+                    required: false
+                }
+            ]
+        },
+        {
             name: 'remove',
             type: 'SUB_COMMAND',
             description: 'Entfernt eine Hausaufgabe für ein bestimmtes Datum.',
@@ -212,6 +249,33 @@ module.exports = {
             delete has[ha.month][ha.day][ha.subject]
             await fs.writeFile('data/ha.json', JSON.stringify(has))
             success(ita, 'Hausaufgabe gelöscht', `Die ${ha.subject} Hausaufgabe bis zum ${ha.day}.${ha.month + 1}. wurde gelöscht`)
+            global.events.emit('editMessage')
+        } else if(ita.options.getSubcommand() == 'edit') {
+            var ha
+            for (const month in require('../../../data/ha.json')) {
+                for(const day in require('../../../data/ha.json')[month]) {
+                    for(const subject in require('../../../data/ha.json')[month][day]) {
+                        if(args.id.value == require('../../../data/ha.json')[month][day][subject].id) {
+                            ha = require('../../../data/ha.json')[month][day][subject]
+                            ha.month = month
+                            ha.day = day
+                            ha.subject = subject
+                            break
+                        }
+                    }
+                    if(ha) break
+                }
+                if(ha) break
+            }
+            if(!ha) return require('../../../embeds').error(ita, 'Hausaufgabe nicht gefunden', 'Die angegebene Hausaufgabe existiert nicht (mehr).')
+            if(args.month?.value) ha.month = args.month.value - 1
+            if(args.day?.value) ha.day = args.day.value
+            if(args.todo?.value) ha.todo = args.todo.value
+            if(args.notizen?.value) ha.extra = args.notizen.value
+            let has = require('../../../data/ha.json')
+            has[ha.month][ha.day][ha.subject] = ha
+            await fs.writeFile('data/ha.json', JSON.stringify(has))
+            success(ita, 'Hausaufgabe bearbeitet', `Die ${ha.subject} Hausaufgabe bis zum ${ha.day}.${ha.month + 1}. wurde bearbeitet`)
             global.events.emit('editMessage')
         } else {
             var ha
