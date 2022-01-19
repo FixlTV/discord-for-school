@@ -1,7 +1,7 @@
 const fs = require('fs')
 
 module.exports = {
-    name: 'Infonachricht',
+    name: 'mainloop',
     event: 'ready',
     once: true,
     async on(client) {
