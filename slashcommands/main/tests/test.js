@@ -100,7 +100,7 @@ module.exports = {
     async run(ita, args, client) {
         await ita.deferReply({ ephemeral: true })
         if(ita.options.getSubcommand() === 'add') {
-            var subject = resolveSubject(args['fach'].value)
+            var subject = args['fach'].value
             var testtype = args['testart'].value
             var day = args['tag'].value
             var month = Number(args['monat'].value) - 1
@@ -114,9 +114,10 @@ module.exports = {
             if(!test[date.getMonth()][date.getDate()]) test[date.getMonth()][date.getDate()] = {}
             test[date.getMonth()][date.getDate()][subject] = testtype
             await fs.writeFile('data/test.json', JSON.stringify(test))
-            return success(ita, `${text} hinzugefügt`, `Ein ${subject} Test (${text}) wurde am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} hinzugefügt.`)
+            global.events.emit('editMessage')
+            return success(ita, `Test hinzugefügt`, `Ein ${subject} Test (${testtype}) wurde am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} hinzugefügt.`)
         } else {
-            var subject = resolveSubject(args['fach'].value)
+            var subject = args.fach.value
             var day = args['tag'].value
             var month = Number(args['monat'].value) - 1
             var date = new Date()
@@ -131,7 +132,7 @@ module.exports = {
             if(test[date.getMonth()][date.getDate()] == {}) delete test[date.getMonth()][date.getDate()]
             await fs.writeFile('data/test.json', JSON.stringify(test))
             global.events.emit('editMessage')
-            return success(ita, `${text} gelöscht`, `Der ${subject} Test (${testtype}) am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} wurde gelöscht.`)
+            return success(ita, `Test gelöscht`, `Der ${subject} Test (${testtype}) am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} wurde gelöscht.`)
         }
     }
 }

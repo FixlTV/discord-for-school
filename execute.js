@@ -35,7 +35,7 @@ module.exports = () => global.events.on('editMessage', async (inputClient) => {
         .setColor(client.color.lightblue)
         .setDescription(`Informationen für ${day}, den ${datum.getDate()}.${datum.getMonth() + 1}.${datum.getFullYear()}`)
         .setTitle(day)
-        .addField('Fächer', client.stundenplan[day].join('\n'))
+        .addField('Fächer', client.stundenplan[day].join('\n') || 'Keine')
     if(geburtstage[0]) embed.addField('Geburtstage', geburtstage.join('\n'))
     if(test[month]?.[date]) {
         var tests = []

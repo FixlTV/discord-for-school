@@ -46,7 +46,7 @@ module.exports = {
             .setColor(client.color.lightblue)
             .setTitle(weekday[date.getDay()])
             .setDescription(`Informationen für ${weekday[date.getDay()]}, den ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`)
-            .addField('Fächer', client.stundenplan[weekday[date.getDay()]].join('\n'))
+            .addField('Fächer', client.stundenplan[weekday[date.getDay()]].join('\n') || 'Keine')
         if(geburtstage[0]) embed.addField('Geburtstage', geburtstage.join('\n'))
         if(test[month]?.[day]) {
             var tests = []

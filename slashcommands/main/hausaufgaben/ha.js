@@ -104,10 +104,10 @@ module.exports = {
      * @param {discord.Client} client 
      */
     async run(ita, args, client) {
-        var data = require('../../../data.json')
+        var data = require('../../../data/data.json')
         await ita.deferReply({ ephemeral: true })
         if(ita.options.getSubcommand() === 'add') {
-            var subject = args['subject'].value
+            var subject = args['fach'].value
             var todo = args['todo'].value
             var extra = args['notizen']?.value
             var day = args['tag'].value
@@ -140,7 +140,7 @@ module.exports = {
              * @param {Number} date 
              * @returns {Date} 
              */
-            let subject = resolveSubject(args['fach'].value)
+            let subject = args['fach'].value
             let todo = args['todo'].value
             let extra = args['notizen']?.value
 
