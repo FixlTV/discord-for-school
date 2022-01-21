@@ -6,6 +6,8 @@
     {
       "commands": [
         "git clone https://github.com/FixlTV/discord-for-school ${rootDir}",
+        "git fetch origin",
+        "git reset --hard origin/main",
         "npm i"
       ],
       "type": "command"
