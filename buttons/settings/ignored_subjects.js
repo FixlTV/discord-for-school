@@ -46,7 +46,8 @@ module.exports = {
         await ita.update({ embeds: [embed], ephemeral: true, components: [selectMenu, buttons] })
 
         //Daten abwarten
-        const collector = ita.message.createMessageComponentCollector({ componentType: 'SELECT_MENU' })
+        const filter = i => i.customId == 'ignored_subjects_select'
+        const collector = ita.message.createMessageComponentCollector({ filter, componentType: 'SELECT_MENU', time: 300000, dispose: true })
 
         collector.on('collect', async (selectmenu) => {
             buttons.components[1].setDisabled(false)

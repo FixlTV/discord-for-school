@@ -84,7 +84,8 @@ module.exports = {
         await ita.update({ embeds: [embed], ephemeral: true, components: [selectMenu, buttons] })
 
         //Daten abwarten
-        const collector = ita.message.createMessageComponentCollector({ componentType: 'SELECT_MENU' })
+        const filter = i => i.customId == 'homework_select'
+        const collector = ita.message.createMessageComponentCollector({ filter, componentType: 'SELECT_MENU', time: 300000, dispose: true })
 
         collector.on('collect', async (selectmenu) => {
             buttons.components[1].setDisabled(false)
@@ -108,7 +109,7 @@ module.exports = {
                     buttons.components[1].setDisabled(true)
                     buttons.components[2].setDisabled(true)
                     selectMenu.components[0].setDisabled(false)
-                    
+
                     let embed = new discord.MessageEmbed()
                         .setTitle('Hausaufgaben bearbeiten')
                         .setDescription('Hier kannst du deine Hausaufgaben als erledigt markieren.\nSie werden dir dann weiter unten in der Liste angezeigt.\nWähle dazu eine oder mehrere Hausaufgaben aus der Liste aus und drücke einen der beiden Knöpfe, um die Markierung zu erstellen/entfernen.')
