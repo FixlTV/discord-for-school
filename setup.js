@@ -231,6 +231,11 @@ module.exports = async () => {
         }
         subjects = [...new Set(subjects)]
         subjects = subjects.map(subject => { return { name: subject, value: subject }})
+        subjects.sort(function(a, b) {
+            if(a.value < b.value) return -1
+            if(a.value > b.value) return 1
+            return 0
+        })
         fs.writeFileSync('data/subjects.json', JSON.stringify(subjects))
 
         if(subjects.length > 25) {
