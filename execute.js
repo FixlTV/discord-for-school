@@ -31,6 +31,13 @@ module.exports = () => global.events.on('editMessage', async (inputClient) => {
             }
         }
     }
+    let buttons = new discord.MessageActionRow()
+        .addComponents(
+            new discord.MessageButton()
+                .setCustomId('main_menu!send')
+                .setLabel('Hauptmenü öffnen')
+                .setStyle('SECONDARY')
+        )
     var embed = new discord.MessageEmbed()
         .setColor(client.color.lightblue)
         .setDescription(`Informationen für ${day}, den ${datum.getDate()}.${datum.getMonth() + 1}.${datum.getFullYear()}`)
@@ -51,9 +58,9 @@ module.exports = () => global.events.on('editMessage', async (inputClient) => {
     }
     if(haArray.length > 0) embed.addField('Hausaufgaben', haArray.join('\n'))
     if(client.message?.editable) {
-        client.message = await client.message.edit({ embeds: [embed] })
+        client.message = await client.message.edit({ embeds: [embed], components: [buttons] })
     } else {
         await client.channel.bulkDelete(100).catch(() => {})
-        client.message = await client.channel.send({ embeds: [embed] }).catch(() => {})
+        client.message = await client.channel.send({ embeds: [embed], components: [buttons] }).catch(() => {})
     }
 })

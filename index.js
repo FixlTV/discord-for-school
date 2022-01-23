@@ -51,6 +51,7 @@ const fs = require('fs');
         require('./execute')()
         global.events.emit('editMessage', client)
         await slashhandler(client)
+        await require('./buttonhandler')(client)
         await eventhandler(client)
         client.user.setStatus('online')
     })
