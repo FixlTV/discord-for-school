@@ -22,11 +22,13 @@ module.exports = {
                 new discord.MessageButton()
                     .setCustomId('notification_manager')
                     .setLabel('Benachrichtigungen [WIP]')
-                    .setStyle('SECONDARY'),
+                    .setStyle('SECONDARY')
+                    .setDisabled(true),
                 new discord.MessageButton()
                     .setCustomId('user_settings')
                     .setLabel('Einstellungen [WIP]')
-                    .setStyle('SECONDARY'),
+                    .setStyle('SECONDARY')
+                    .setDisabled(true),
                 new discord.MessageButton()
                     .setLabel('Hilfe')
                     .setStyle('LINK')
