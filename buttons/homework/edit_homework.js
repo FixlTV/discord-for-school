@@ -87,23 +87,9 @@ module.exports = {
         const collector = ita.message.createMessageComponentCollector({ componentType: 'SELECT_MENU' })
 
         collector.on('collect', async (selectmenu) => {
-            let buttons = new discord.MessageActionRow()
-                .addComponents(
-                    new discord.MessageButton()
-                        .setLabel('❮')
-                        .setCustomId('user_homework')
-                        .setStyle('DANGER'),
-                    new discord.MessageButton()
-                        .setLabel('Als erledigt markieren')
-                        .setStyle('SUCCESS')
-                        .setCustomId('homework_update!done')
-                        .setDisabled(false),
-                    new discord.MessageButton()
-                        .setLabel('Markierung aufheben')
-                        .setStyle('DANGER')
-                        .setCustomId('homework_update!undone')
-                        .setDisabled(false),
-                )
+            buttons.components[1].setDisabled(false)
+            buttons.components[2].setDisabled(false)
+            selectMenu.components[0].setDisabled(true)
             embed.setDescription('Deine Auswahl wurde übernommen.\nBitte drücke einen der beiden Knöpfe, um die Markierung zu erstellen/entfernen.')
             await selectmenu.update({ embeds: [embed], ephemeral: true, components: [ selectMenu, buttons ]})
 
@@ -119,40 +105,10 @@ module.exports = {
                     userdata[user.id] = user.data
                     await fs.writeFile('data/userdata.json', JSON.stringify(userdata))
 
-                    let selectMenu = new discord.MessageActionRow()
-                        .addComponents(
-                            new discord.MessageSelectMenu()
-                                .addOptions(
-                                    haarray.map(ha => {
-                                        return {
-                                            label: `[${ha.id}] ${ha.subject}`,
-                                            value: ha.id.toString(),
-                                            description: ha.todo,
-                                            default: false
-                                        }
-                                    })
-                                )
-                                .setPlaceholder('Bitte Hausaufgabe(n) auswählen')
-                                .setCustomId('homework_select')
-                                .setMinValues(1)
-                        )
-                    let buttons = new discord.MessageActionRow()
-                        .addComponents(
-                            new discord.MessageButton()
-                                .setLabel('❮')
-                                .setCustomId('user_homework')
-                                .setStyle('DANGER'),
-                            new discord.MessageButton()
-                                .setLabel('Als erledigt markieren')
-                                .setStyle('SUCCESS')
-                                .setCustomId('homework_update!done')
-                                .setDisabled(true),
-                            new discord.MessageButton()
-                                .setLabel('Markierung aufheben')
-                                .setStyle('DANGER')
-                                .setCustomId('homework_update!undone')
-                                .setDisabled(true),
-                        )
+                    buttons.components[1].setDisabled(true)
+                    buttons.components[2].setDisabled(true)
+                    selectMenu.components[0].setDisabled(false)
+                    
                     let embed = new discord.MessageEmbed()
                         .setTitle('Hausaufgaben bearbeiten')
                         .setDescription('Hier kannst du deine Hausaufgaben als erledigt markieren.\nSie werden dir dann weiter unten in der Liste angezeigt.\nWähle dazu eine oder mehrere Hausaufgaben aus der Liste aus und drücke einen der beiden Knöpfe, um die Markierung zu erstellen/entfernen.')
@@ -168,40 +124,10 @@ module.exports = {
                     userdata[user.id] = user.data
                     await fs.writeFile('data/userdata.json', JSON.stringify(userdata))
 
-                    selectMenu = new discord.MessageActionRow()
-                        .addComponents(
-                            new discord.MessageSelectMenu()
-                                .addOptions(
-                                    haarray.map(ha => {
-                                        return {
-                                            label: `[${ha.id}] ${ha.subject}`,
-                                            value: ha.id.toString(),
-                                            description: ha.todo,
-                                            default: false
-                                        }
-                                    })
-                                )
-                                .setPlaceholder('Bitte Hausaufgabe(n) auswählen')
-                                .setCustomId('homework_select')
-                                .setMinValues(1)
-                        )
-                    let buttons = new discord.MessageActionRow()
-                        .addComponents(
-                            new discord.MessageButton()
-                                .setLabel('❮')
-                                .setCustomId('user_homework')
-                                .setStyle('DANGER'),
-                            new discord.MessageButton()
-                                .setLabel('Als erledigt markieren')
-                                .setStyle('SUCCESS')
-                                .setCustomId('homework_update!done')
-                                .setDisabled(true),
-                            new discord.MessageButton()
-                                .setLabel('Markierung aufheben')
-                                .setStyle('DANGER')
-                                .setCustomId('homework_update!undone')
-                                .setDisabled(true),
-                        )
+                    buttons.components[1].setDisabled(true)
+                    buttons.components[2].setDisabled(true)
+                    selectMenu.components[0].setDisabled(false)
+
                     let embed = new discord.MessageEmbed()
                         .setTitle('Hausaufgaben bearbeiten')
                         .setDescription('Hier kannst du deine Hausaufgaben als erledigt markieren.\nSie werden dir dann weiter unten in der Liste angezeigt.\nWähle dazu eine oder mehrere Hausaufgaben aus der Liste aus und drücke einen der beiden Knöpfe, um die Markierung zu erstellen/entfernen.')

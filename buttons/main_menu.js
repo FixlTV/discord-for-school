@@ -26,9 +26,8 @@ module.exports = {
                     .setDisabled(true),
                 new discord.MessageButton()
                     .setCustomId('user_settings')
-                    .setLabel('Einstellungen [WIP]')
-                    .setStyle('SECONDARY')
-                    .setDisabled(true),
+                    .setLabel('Einstellungen')
+                    .setStyle('SECONDARY'),
                 new discord.MessageButton()
                     .setLabel('Hilfe')
                     .setStyle('LINK')
