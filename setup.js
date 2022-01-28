@@ -5,7 +5,7 @@ const { Client } = require('discord.js');
 module.exports = async () => {
     console.log('\x1b[36m%s\x1b[0m', 'Willkommen beim Setup Assistenten!');
     const client = new Client({ intents: ['DIRECT_MESSAGES'] })
-    console.log('Alle erforderlichen Daten werden nun angelegt.')
+    console.log('\x1b[2m%s\x1b[0m', '[ ]', 'Alle erforderlichen Daten werden nun erstellt.')
 
     if(!fs.existsSync('./data')) fs.mkdirSync('./data');
 
@@ -208,6 +208,12 @@ module.exports = async () => {
             }
         }
         if(changed) fs.writeFileSync('./config.json', JSON.stringify(config, null, 4))
+    }
+
+    if(require('./config.json').vtp && !fs.existsSync('vertretungsplan.js')) {
+        fs.writeFileSync('vertretungsplan.js', `module.exports = async () => { return null }`)
+        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'vertretungsplan.js wurde angelegt.')
+        console.log('\x1b[2m%s\x1b[0m', '[ ]', 'Bitte eine Funktion für den Vertretungsplan einfügen.')
     }
 
     if(!fs.existsSync('data/stundenplan.json')) {

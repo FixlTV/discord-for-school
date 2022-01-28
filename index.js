@@ -4,7 +4,7 @@ const fs = require('fs');
 
 (async () => {
     if(!fs.existsSync('data/test.json') || !fs.existsSync('data/ha.json') || !fs.existsSync('data/userdata.json') || !fs.existsSync('data/data.json') || !fs.existsSync('./config.json') || !fs.existsSync('data/stundenplan.json') || !fs.existsSync('data/subjects.json') || !fs.existsSync('data/testtypes.json')) await require('./setup.js')()
-    if(require('./config.template.json').length != Object.keys(require('./config.json')).length) await require('./setup.js')()
+    if((require('./config.template.json').length != Object.keys(require('./config.json')).length) || (require('./config.json').vtp & !fs.existsSync('vertretungsplan.js'))) await require('./setup.js')()
     const config  = require('./config.json')
     const eventhandler = require('./eventhandler')
     const slashhandler = require('./slashhandler')
