@@ -42,6 +42,13 @@ module.exports = {
             })
         }
 
+        if(!haarray.length) {
+            let embed = new discord.MessageEmbed()
+                .setColor(client.color.red)
+                .setTitle('Keine Hausaufgaben')
+                
+        }
+
         //Output
         let selectMenu = new discord.MessageActionRow()
             .addComponents(

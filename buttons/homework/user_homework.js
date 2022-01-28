@@ -75,12 +75,14 @@ module.exports = {
                 new discord.MessageButton()
                     .setCustomId('main_menu')
                     .setLabel('❮')
-                    .setStyle('DANGER'),
-                new discord.MessageButton()
-                    .setCustomId('edit_homework')
-                    .setLabel('Status bearbeiten')
-                    .setStyle('SECONDARY')
+                    .setStyle('DANGER')
             )
+        if(output != 'Keine Hausaufgaben 🥳') buttons.addComponents(
+            new discord.MessageButton()
+                .setCustomId('edit_homework')
+                .setLabel('Status bearbeiten')
+                .setStyle('SECONDARY')
+            ) 
         await ita.update({ embeds: [embed], ephemeral: true, components: [buttons] })
     }
 }
