@@ -64,101 +64,107 @@ module.exports = async () => {
         else return await ynQuestion(input)
     }
 
+
+    //config setup
+    async function getToken() {
+        let token = await question('\x1b[93m[!]\x1b[0m Bitte Bot Token eingeben\n >  ')
+        try {
+            await client.login(token)
+            console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Token wurde erfolgreich eingelesen.')
+            if(!await ynQuestion('\x1b[93m[!]\x1b[0m Bot Tag: ' + client.user.tag + '?')) return getToken()
+        } catch (err) {
+            console.error('\x1b[91m%s\x1b[0m', '[X]', 'Token ist ungültig!')
+            token = await getToken()
+        }
+        return token
+    }
+
+    async function getSendTime() {
+        let sendTime = await question('\x1b[93m[!]\x1b[0m Bitte Stunde, in der das Dashboard auf den nächsten Tag aktualisiert werden soll, eingeben \x1b[2m[0-23]\x1b[0m\n >  ')
+        if(isNaN(sendTime) || Number(sendTime) < 0 || Number(sendTime) > 23) {
+            console.error('\x1b[91m%s\x1b[0m', '[X]', 'Ungültige Zeit! Bitte einen Integer zwischen 0 und 23 eingeben.')
+            sendTime = await getSendTime()
+        }
+        return sendTime
+    }
+
+    async function getChannel() {
+        let channel = await question('\x1b[93m[!]\x1b[0m Bitte Channel ID für das Dashboard eingeben\n >  ')
+        try {
+            await client.channels.fetch(channel)
+            console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Channel wurde erfolgreich eingelesen.')
+            if(!await ynQuestion('\x1b[93m[!]\x1b[0m Kanalname: ' + client.channels.cache.get(channel).name + '?')) return getChannel()
+        } catch (err) {
+            console.error('\x1b[91m%s\x1b[0m', '[X]', 'Ungültiger Kanal! Befindet sich der Bot bereits auf dem Server?')
+            channel = await getChannel()
+        }
+        return channel
+    }
+
+    async function getMods(mods) {
+        if(!mods) mods = []
+        let mod
+        if(mods.length) mod = await ynQuestion('\x1b[93m[!]\x1b[0m Weitere Moderatoren hinzufügen?')
+        else mod = await ynQuestion('\x1b[93m[!]\x1b[0m Moderatoren hinzufügen?')
+        if(mod) {
+            mod = await question('\x1b[93m[!]\x1b[0m Bitte User ID des Moderators eingeben\n >  ')
+            try {
+                await client.users.fetch(mod)
+                console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Moderator wurde erfolgreich eingelesen.')
+                mods.push(mod)
+            } catch {
+                console.error('\x1b[91m%s\x1b[0m', '[X]', 'Ungültiger Nutzer!')
+            }
+            await getMods(mods)
+        }
+    }
+
+    async function getState() {
+        let state = await question('\x1b[93m[!]\x1b[0m Bitte Bundesland-Code oder "?" für eine Liste möglicher Antworten eingeben\n >  ')
+        if(state == '?') {
+            console.log('\x1b[36m[ ]\x1b[0m', 'Bundesland-Codes:')
+            console.log('    BW: Baden-Württemberg')
+            console.log('    BY: Bayern')
+            console.log('    BE: Berlin')
+            console.log('    BB: Brandenburg')
+            console.log('    HB: Bremen')
+            console.log('    HH: Hamburg')
+            console.log('    HE: Hessen')
+            console.log('    MV: Mecklenburg-Vorpommern')
+            console.log('    NI: Niedersachsen')
+            console.log('    NW: Nordrhein-Westfalen')
+            console.log('    RP: Rheinland-Pfalz')
+            console.log('    SL: Saarland')
+            console.log('    SN: Sachsen')
+            console.log('    ST: Sachsen-Anhalt')
+            console.log('    SH: Schleswig-Holstein')
+            console.log('    TH: Thüringen')
+            state = await getState()
+        } else if(['BW', 'BY', 'BE', 'BB', 'HB', 'HH', 'HE', 'NW', 'NI', 'NW', 'RP', 'SL', 'SN', 'ST', 'SH', 'TH'].includes(state.toUpperCase())) return state.toUpperCase()
+        else {
+            console.log('\x1b[91m%s\x1b[0m', '[X]', 'Ungültiger Bundesland-Code! Verwende ? für eine Liste möglicher Antworten.')
+            state = await getState()
+        }
+        return state
+    }
+
+    async function getVtp() { return await ynQuestion('\x1b[93m[!]\x1b[0m Vertretungsplan verwenden?') }
+
     if(!fs.existsSync('./config.json')) {
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'config.json wird angelegt.')
 
-        async function getToken() {
-            let token = await question('\x1b[93m[!]\x1b[0m Bitte Bot Token eingeben\n >  ')
-            try {
-                await client.login(token)
-                console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Token wurde erfolgreich eingelesen.')
-                if(!await ynQuestion('\x1b[93m[!]\x1b[0m Bot Tag: ' + client.user.tag + '?')) return getToken()
-            } catch (err) {
-                console.error('\x1b[91m%s\x1b[0m', '[X]', 'Token ist ungültig!')
-                token = await getToken()
-            }
-            return token
-        }
-
         let token = await getToken()
-
-        async function getSendTime() {
-            let sendTime = await question('\x1b[93m[!]\x1b[0m Bitte Stunde, in der das Dashboard auf den nächsten Tag aktualisiert werden soll, eingeben \x1b[2m[0-23]\x1b[0m\n >  ')
-            if(isNaN(sendTime) || Number(sendTime) < 0 || Number(sendTime) > 23) {
-                console.error('\x1b[91m%s\x1b[0m', '[X]', 'Ungültige Zeit! Bitte einen Integer zwischen 0 und 23 eingeben.')
-                sendTime = await getSendTime()
-            }
-            return sendTime
-        }
         
         let sendTime = await getSendTime()
 
-        async function getChannel() {
-            let channel = await question('\x1b[93m[!]\x1b[0m Bitte Channel ID für das Dashboard eingeben\n >  ')
-            try {
-                await client.channels.fetch(channel)
-                console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Channel wurde erfolgreich eingelesen.')
-                if(!await ynQuestion('\x1b[93m[!]\x1b[0m Kanalname: ' + client.channels.cache.get(channel).name + '?')) return getChannel()
-            } catch (err) {
-                console.error('\x1b[91m%s\x1b[0m', '[X]', 'Ungültiger Kanal! Befindet sich der Bot bereits auf dem Server?')
-                channel = await getChannel()
-            }
-            return channel
-        }
-
         let channel = await getChannel()
 
-        var mods = []
-        async function getMods() {
-            let mod
-            if(mods.length) mod = await ynQuestion('\x1b[93m[!]\x1b[0m Weitere Moderatoren hinzufügen?')
-            else mod = await ynQuestion('\x1b[93m[!]\x1b[0m Moderatoren hinzufügen?')
-            if(mod) {
-                mod = await question('\x1b[93m[!]\x1b[0m Bitte User ID des Moderators eingeben\n >  ')
-                try {
-                    await client.users.fetch(mod)
-                    console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Moderator wurde erfolgreich eingelesen.')
-                    mods.push(mod)
-                } catch {
-                    console.error('\x1b[91m%s\x1b[0m', '[X]', 'Ungültiger Nutzer!')
-                }
-                await getMods()
-            }
-        }
-
-        await getMods()
+        let mods = await getMods()
         mods = [...new Set(mods)]
 
-        async function getState() {
-            let state = await question('\x1b[93m[!]\x1b[0m Bitte Bundesland-Code oder "?" für eine Liste möglicher Antworten eingeben\n >  ')
-            if(state == '?') {
-                console.log('\x1b[36m[ ]\x1b[0m', 'Bundesland-Codes:')
-                console.log('    BW: Baden-Württemberg')
-                console.log('    BY: Bayern')
-                console.log('    BE: Berlin')
-                console.log('    BB: Brandenburg')
-                console.log('    HB: Bremen')
-                console.log('    HH: Hamburg')
-                console.log('    HE: Hessen')
-                console.log('    MV: Mecklenburg-Vorpommern')
-                console.log('    NI: Niedersachsen')
-                console.log('    NW: Nordrhein-Westfalen')
-                console.log('    RP: Rheinland-Pfalz')
-                console.log('    SL: Saarland')
-                console.log('    SN: Sachsen')
-                console.log('    ST: Sachsen-Anhalt')
-                console.log('    SH: Schleswig-Holstein')
-                console.log('    TH: Thüringen')
-                state = await getState()
-            } else if(['BW', 'BY', 'BE', 'BB', 'HB', 'HH', 'HE', 'NW', 'NI', 'NW', 'RP', 'SL', 'SN', 'ST', 'SH', 'TH'].includes(state.toUpperCase())) return state.toUpperCase()
-            else {
-                console.log('\x1b[91m%s\x1b[0m', '[X]', 'Ungültiger Bundesland-Code! Verwende ? für eine Liste möglicher Antworten.')
-                state = await getState()
-            }
-            return state
-        }
-
         let state = await getState()
+
+        let vtp = await getVtp()
 
         let config = {
             token,
@@ -171,12 +177,37 @@ module.exports = async () => {
             mods,
             channel,
             sendtime: sendTime,
-            state
+            state,
+            vtp
         }
 
         client.destroy()
         fs.writeFileSync('./config.json', JSON.stringify(config, null, 4))
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'config.json wurde erfolgreich angelegt.')
+    }
+
+    //config nach fehlenden Werten überprüfen
+    {
+        let config = require('./config.json')
+        let changed = false
+        let keyfunctions = {
+            token: getToken,
+            sendtime: getSendTime,
+            channel: getChannel,
+            mods: getMods,
+            state: getState,
+            vtp: getVtp
+        }
+        for await (let key of require('./config.template.json')) {
+            if(!config[key]) {
+                if(!changed) {
+                    console.log('\x1b[91m%s\x1b[0m', '[X]', 'Config unvollständig!')
+                    changed = true
+                }
+                config[key] = await keyfunctions[key]()
+            }
+        }
+        if(changed) fs.writeFileSync('./config.json', JSON.stringify(config, null, 4))
     }
 
     if(!fs.existsSync('data/stundenplan.json')) {

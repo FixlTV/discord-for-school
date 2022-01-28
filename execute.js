@@ -57,6 +57,12 @@ module.exports = () => global.events.on('editMessage', async (inputClient) => {
         haArray.push(`**[${has[month][date][ha].id}]** | __${ha}__: ${has[month][date][ha].todo.replaceAll('\n', ' ')}`)
     }
     if(haArray.length > 0) embed.addField('Hausaufgaben', haArray.join('\n'))
+
+    if(config.vtp) {
+        let vtp = await require('./vertretungsplan')()
+        if(vtp) embed.addField('Vertretungen', vtp)
+    }
+
     if(client.message?.editable) {
         client.message = await client.message.edit({ embeds: [embed], components: [buttons] })
     } else {
