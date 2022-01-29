@@ -60,6 +60,7 @@ module.exports = () => global.events.on('editMessage', async (inputClient) => {
 
     if(config.vtp) {
         let vtp = await require('./vertretungsplan')()
+        if(vtp && typeof vtp !== 'string') throw new Error(`Fehler beim Laden des Vertretungsplan: Der zurückgegebene Wert ist kein String (${typeof vtp} erhalten).`)
         if(vtp) embed.addField('Vertretungen', vtp)
     }
 

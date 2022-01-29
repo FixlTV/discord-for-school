@@ -148,6 +148,20 @@ module.exports = async () => {
         return state
     }
 
+    async function getTypes(testtypes) {
+        if(!testtypes) testtypes = []
+        let test = await question('\x1b[93m[!]\x1b[0m Name der Art des Tests eingeben\n >  ')
+        if(test?.trim().match(/[\w -]+/g)) {
+            testtypes.push(test.trim())
+            let proceed = await ynQuestion('\x1b[93m[!]\x1b[0m Weitere Testarten hinzufügen?')
+            if(proceed) await getTypes(testtypes)
+        } else {
+            console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib eine Testart an (Nur Buchstaben, Zahlen, Unter-/Bindestriche und Leerzeichen)')
+            await getTypes(testtypes)
+        }
+        return testtypes
+    }
+
     async function getVtp() { return await ynQuestion('\x1b[93m[!]\x1b[0m Vertretungsplan verwenden?') }
 
     if(!fs.existsSync('./config.json')) {
@@ -216,45 +230,44 @@ module.exports = async () => {
         console.log('\x1b[2m%s\x1b[0m', '[ ]', 'Bitte eine Funktion für den Vertretungsplan einfügen.')
     }
 
+    if(require('./config.json').vtp && !fs.existsSync('vertretungsplan')) fs.mkdirSync('vertretungsplan')
+
     if(!fs.existsSync('data/stundenplan.json')) {
-        let create = await ynQuestion('\x1b[93m[!]\x1b[0m Stundenplan anlegen?')
-        if(create) {
-            console.log('\x1b[92m%s\x1b[0m', '[✓]', 'stundenplan.json wird angelegt.')
-            fs.writeFileSync('stundenplan.json', '{"Montag": [], "Dienstag": [], "Mittwoch": [], "Donnerstag": [], "Freitag": [], "Samstag": [], "Sonntag": []}')
-            console.log('\x1b[93m%s\x1b[0m', '[!]', 'Bitte jedes Fach für jeden Tag \x1b[1meinmal\x1b[0m eingeben. Zum Speichern des Tages "Enter" drücken.\n    Nach dem Speichern eines Tages kann er nicht weiter bearbeitet werden.')
-    
-            const weekday = [ 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag' ]
+        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'stundenplan.json wird angelegt.')
+        fs.writeFileSync('data/stundenplan.json', '{"Montag": [], "Dienstag": [], "Mittwoch": [], "Donnerstag": [], "Freitag": [], "Samstag": [], "Sonntag": []}')
+        console.log('\x1b[93m%s\x1b[0m', '[!]', 'Bitte jedes Fach für jeden Tag \x1b[1meinmal\x1b[0m eingeben. Zum Speichern des Tages "Enter" drücken.\n    Nach dem Speichern eines Tages kann er nicht weiter bearbeitet werden.')
 
-            for (const day of weekday) {
-                console.log('\x1b[93m[!]\x1b[0m', 'Bitte Fächer für', day, 'eingeben')
+        const weekday = [ 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag' ]
 
-                async function newSubject() {
-                    let fach = await question('\x1b[93m[!]\x1b[0m Bitte Fach eingeben\n >  ')
-                    if(fach && fach.trim().match(/[\w -]+/g)) {
-                        let stundenplan = require('./stundenplan.json')
-                        if(!stundenplan[day]) stundenplan[day] = []
-                        stundenplan[day].push(fach.trim())
-                        stundenplan[day] = [...new Set(stundenplan[day])]
-                        fs.writeFileSync('./stundenplan.json', JSON.stringify(stundenplan, null, 4))
-                        await newSubject()
-                    } else if(fach?.trim()) {
-                        console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib ein Fach an (Nur Buchstaben, Zahlen, Unter-/Bindestriche und Leerzeichen)')
-                        await newSubject()
-                    } else {
-                        return
-                    }
-                }
+        for (const day of weekday) {
+            console.log('\x1b[93m[!]\x1b[0m', 'Bitte Fächer für', day, 'eingeben')
 
-                await newSubject()
-                if(!require('./data/stundenplan.json')[day]) {
+            async function newSubject() {
+                let fach = await question('\x1b[93m[!]\x1b[0m Bitte Fach eingeben\n >  ')
+                if(fach && fach.trim().match(/[\w -]+/g)) {
                     let stundenplan = require('./data/stundenplan.json')
-                    stundenplan[day] = []
+                    if(!stundenplan[day]) stundenplan[day] = []
+                    stundenplan[day].push(fach.trim())
+                    stundenplan[day] = [...new Set(stundenplan[day])]
                     fs.writeFileSync('data/stundenplan.json', JSON.stringify(stundenplan, null, 4))
+                    await newSubject()
+                } else if(fach?.trim()) {
+                    console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib ein Fach an (Nur Buchstaben, Zahlen, Unter-/Bindestriche und Leerzeichen)')
+                    await newSubject()
+                } else {
+                    return
                 }
             }
 
-            console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Stundenplan gespeichert')
+            await newSubject()
+            if(!require('./data/stundenplan.json')[day]) {
+                let stundenplan = require('./data/stundenplan.json')
+                stundenplan[day] = []
+                fs.writeFileSync('data/stundenplan.json', JSON.stringify(stundenplan, null, 4))
+            }
         }
+
+        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Stundenplan gespeichert')
     }
 
     if(!fs.existsSync('./data/subjects.json')) {
@@ -291,23 +304,7 @@ module.exports = async () => {
     if(!fs.existsSync('data/testtypes.json')) {
         console.log('\x1b[93m%s\x1b[0m', '[!]', 'Bitte gib Möglichkeiten der (optimalerweise angesagten) Leistungserhebung an (Arbeit, Test, whatever)')
 
-        let testtypes = []
-
-        async function getTypes() {
-            let test = await question('\x1b[93m[!]\x1b[0m Name der Art des Tests eingeben\n >  ')
-            if(test?.trim().match(/[\w -]+/g)) {
-                testtypes.push(test.trim())
-                let proceed = await ynQuestion('\x1b[93m[!]\x1b[0m Weitere Testarten hinzufügen?')
-                if(proceed) await getTypes()
-            } else {
-                console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib eine Testart an (Nur Buchstaben, Zahlen, Unter-/Bindestriche und Leerzeichen)')
-                await getTypes()
-            }
-            return testtypes
-        }
-
-        await getTypes()
-        testtypes = [...new Set(testtypes)]
+        let testtypes = await [...new Set(await getTypes())]
         if(testtypes.length > 25) {
             console.log('\x1b[91m%s\x1b[0m', '[X]', 'Es wurden mehr als 25 unterschiedliche Testarten gefunden.')
             console.log('    Bitte beachte, das Discord Choices maximal 25 Optionen unterstützen können.')

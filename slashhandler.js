@@ -1,7 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { Client, MessageEmbed } = require('discord.js')
-const axios = require('axios')
+const { Client } = require('discord.js')
 
 /**
  * 
