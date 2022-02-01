@@ -64,6 +64,7 @@ module.exports = {
                     if(!user.data.ignoredSubjects) user.data.ignoredSubjects = []
                     let ids = selectmenu.values
                     ids.forEach(id => { user.data.ignoredSubjects.push(id) })
+                    user.data.subjects = [...new Set(user.data.subjects)]
                     let userdata = require(process.cwd() + '/data/userdata.json')
                     userdata[user.id] = user.data
                     await fs.writeFile('data/userdata.json', JSON.stringify(userdata))
