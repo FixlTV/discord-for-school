@@ -19,6 +19,12 @@ module.exports = {
                     .setLabel('Ignorierte Fächer')
                     .setStyle('SECONDARY')
             )
+        if(require('../../config.json').mods?.includes(ita.user.id)) buttons.addComponents(
+            new discord.MessageButton()
+                .setCustomId('dev_settings')
+                .setLabel('Entwickler-Einstellungen')
+                .setStyle('SECONDARY')
+        )
         await ita.update({ embeds: [embed], ephemeral: true, components: [buttons] })
     }
 }
