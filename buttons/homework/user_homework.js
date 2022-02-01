@@ -26,8 +26,7 @@ module.exports = {
                     let ha = subjects[subject]
                     let datex = new Date()
                     datex.setMonth(month, date)
-                    datex.setHours(23, 59, 59, 999)
-                    if(Date.now() > datex.getTime()) datex.setFullYear(datex.getFullYear() + 1)
+                    if(new Date(Date.now()).setHours(0, 0, 0, 0) > datex.getTime()) datex.setFullYear(datex.getFullYear() + 1)
                     haarray.push({
                         subject,
                         id: ha.id,
