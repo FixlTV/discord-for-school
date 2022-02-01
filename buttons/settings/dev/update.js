@@ -25,15 +25,15 @@ module.exports = {
         const collector = ita.message.createMessageComponentCollector({ max: 1 })
         collector.on('collect', async (button) => {
             if(button.customId == 'dev_settings') return
-            var stdout
-            let { error, stdout1 } = await exec('git fetch')
+            await exec('git remote update')
+            let out = await exec('git pull')
+            var stdout = out.stdout
             let embed
-            stdout = stdout1
-            if(error) {
+            if(out.error) {
                 embed = new discord.MessageEmbed()
                     .setColor(client.color.red)
                     .setTitle('Fehler')
-                    .setDescription('Beim Pullen ist ein Fehler aufgetreten.\nBenutze **🗑**, um `git stash` auszuführen und das Update zu erzwingen.\n\n```\n' + error + '```')
+                    .setDescription('Beim Pullen ist ein Fehler aufgetreten.\nBenutze **🗑**, um `git stash` auszuführen und das Update zu erzwingen.\n\n```\n' + out.error + '```')
                 let buttons = new discord.MessageActionRow()
                     .addComponents(
                         new discord.MessageButton()
@@ -48,13 +48,13 @@ module.exports = {
                 await button.update({ embeds: [embed], ephemeral: true, components: [buttons] })
                 button = await button.message.awaitMessageComponent()
                 if(button.customId == 'dev_settings') return;
-                let { error, stdout_error } = await exec('git stash')
-                if(error) return button.update({ embeds: [new discord.MessageEmbed().setColor(client.color.red).setTitle('Fehler').setDescription('Beim stashen ist ein unbekannter Fehler aufgetreten.\nDas Update wird abgebrochen.')], ephemeral: true, components: [buttons.spliceComponents(1, 1)] })
-                let { error_new, stdout2 } = await exec('git fetch --force')
-                if(error_new) return button.update({ embeds: [new discord.MessageEmbed().setColor(client.color.red).setTitle('Fehler').setDescription('Beim Pullen ist ein unbekannter Fehler aufgetreten.\nDas Update wird abgebrochen.')], ephemeral: true, components: [buttons.spliceComponents(1, 1)] })
-                stdout = stdout2
+                let out = await exec('git stash')
+                if(out.error) return button.update({ embeds: [new discord.MessageEmbed().setColor(client.color.red).setTitle('Fehler').setDescription('Beim Stashen ist ein unbekannter Fehler aufgetreten.\nDas Update wird abgebrochen.')], ephemeral: true, components: [buttons.spliceComponents(1, 1)] })
+                out = await exec('git pull --force')
+                if(out.error) return button.update({ embeds: [new discord.MessageEmbed().setColor(client.color.red).setTitle('Fehler').setDescription('Beim Pullen ist ein unbekannter Fehler aufgetreten.\nDas Update wird abgebrochen.')], ephemeral: true, components: [buttons.spliceComponents(1, 1)] })
+                stdout = out.stdout
             }
-            if(stdout?.toString().includes('FixlTV/discord-for-school')) {
+            if(stdout?.toString().includes(',')) {
                 embed = new discord.MessageEmbed()
                     .setColor(client.color.lime)
                     .setTitle('Update erfolgreich')
