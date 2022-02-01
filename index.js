@@ -6,8 +6,6 @@ const fs = require('fs');
     if(!fs.existsSync('data/test.json') || !fs.existsSync('data/ha.json') || !fs.existsSync('data/userdata.json') || !fs.existsSync('data/data.json') || !fs.existsSync('./config.json') || !fs.existsSync('data/stundenplan.json') || !fs.existsSync('data/subjects.json') || !fs.existsSync('data/testtypes.json')) await require('./setup.js')()
     if((require('./config.template.json').length != Object.keys(require('./config.json')).length) || (require('./config.json').vtp & !fs.existsSync('vertretungsplan.js'))) await require('./setup.js')()
     const config  = require('./config.json')
-    const eventhandler = require('./eventhandler')
-    const slashhandler = require('./slashhandler')
     const { default: axios } = require('axios')
     const Emitter = require('events').EventEmitter
 
@@ -51,9 +49,9 @@ const fs = require('fs');
 
         require('./execute')()
         global.events.emit('editMessage', client)
-        await slashhandler(client)
+        await require('./slashhandler')(client)
         await require('./buttonhandler')(client)
-        await eventhandler(client)
+        await require('./eventhandler')(client)
         client.user.setStatus('online')
     })
 
