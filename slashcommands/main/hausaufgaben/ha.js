@@ -297,7 +297,7 @@ module.exports = {
             if(!ha) return require('../../../embeds').error(ita, 'Hausaufgabe nicht gefunden', 'Die angegebene Hausaufgabe existiert nicht (mehr).')
             let embed = new discord.MessageEmbed()
                 .setTitle('Hausaufgabe ID: '+ ha.id)
-                .setDescription(`Informationen zur ${ha.subject} Hausaufgabe für den ${ha.day}.${ha.month + 1}.`)
+                .setDescription(`Informationen zur ${ha.subject} Hausaufgabe für den ${ha.day}.${parseInt(ha.month) + 1}.`)
                 .addField('Aufgabe', ha.todo)
                 .setColor(client.color.lightblue)
             if(ha.extra) embed.addField('Zusätzliche Informationen', ha.extra)
