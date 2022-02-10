@@ -1,5 +1,6 @@
 const discord = require('discord.js');
 const config = require('./config')
+const getCalendarWeek = require('./getCalendarWeek')
 
 var client
 
@@ -38,11 +39,20 @@ module.exports = () => global.events.on('editMessage', async (inputClient) => {
                 .setLabel('Hauptmenü öffnen')
                 .setStyle('SECONDARY')
         )
+
+    let subjects = client.stundenplan[day]
+    subjects = subjects.map((subject) => {
+        if(subject.includes('$')) {
+            return subject.split('$')[1 - (getCalendarWeek(datum) % 2)]
+        }
+        return subject
+    })
+
     var embed = new discord.MessageEmbed()
         .setColor(client.color.lightblue)
         .setDescription(`Informationen für ${day}, den ${datum.getDate()}.${datum.getMonth() + 1}.${datum.getFullYear()}`)
         .setTitle(day)
-        .addField('Fächer', client.stundenplan[day].join('\n') || 'Keine')
+        .addField('Fächer', subjects.join('\n') || 'Keine')
     if(geburtstage[0]) embed.addField('Geburtstage', geburtstage.join('\n'))
     if(test[month]?.[date]) {
         var tests = []
