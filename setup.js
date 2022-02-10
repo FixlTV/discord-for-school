@@ -235,7 +235,7 @@ module.exports = async () => {
     if(!fs.existsSync('data/stundenplan.json')) {
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'stundenplan.json wird angelegt.')
         fs.writeFileSync('data/stundenplan.json', '{"Montag": [], "Dienstag": [], "Mittwoch": [], "Donnerstag": [], "Freitag": [], "Samstag": [], "Sonntag": []}')
-        console.log('\x1b[93m%s\x1b[0m', '[!]', 'Bitte jedes Fach für jeden Tag \x1b[1meinmal\x1b[0m eingeben. Zum Speichern des Tages "Enter" drücken.\n    Nach dem Speichern eines Tages kann er nicht weiter bearbeitet werden.')
+        console.log('\x1b[93m%s\x1b[0m', '[!]', 'Bitte jedes Fach für jeden Tag \x1b[1meinmal\x1b[0m eingeben. Zum Speichern des Tages "Enter" drücken.\n    Nach dem Speichern eines Tages kann er nicht weiter bearbeitet werden.\n    Wenn zwei Fächer im wöchentlichen Wechsel vorkommen, trenne die beiden mit einem "$"-Zeichen.')
 
         const weekday = [ 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag' ]
 
@@ -243,8 +243,16 @@ module.exports = async () => {
             console.log('\x1b[93m[!]\x1b[0m', 'Bitte Fächer für', day, 'eingeben')
 
             async function newSubject() {
-                let fach = await question('\x1b[93m[!]\x1b[0m Bitte Fach eingeben\n >  ')
-                if(fach && fach.trim().match(/[\w -]+/g)) {
+                let fach = await question(`\x1b[93m[!]\x1b[0m Bitte Fach (${day}) eingeben\n >  `)
+                if(fach && fach.trim().match(/[\w -$]+/g)) {
+                    if(fach.includes('$')) {
+                        if(!fach.split('$')[1]) {
+                            console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib auch ein zweites Fach an (Mögliche Eingabe: "Physik$Chemie")')
+                            return await newSubject()
+                        }
+                        console.log('\x1b[93m[!]\x1b[0m', `${fach.split('$')[0].trim()} wird in geraden Kalenderwochen angezeigt, ${fach.split('$')[1].trim()} in ungeraden Kalenderwochen.`)
+                        fach = fach.split(/ *\$*/g).splice(0, 2).join('$')
+                    }
                     let stundenplan = require('./data/stundenplan.json')
                     if(!stundenplan[day]) stundenplan[day] = []
                     stundenplan[day].push(fach.trim())
@@ -252,7 +260,7 @@ module.exports = async () => {
                     fs.writeFileSync('data/stundenplan.json', JSON.stringify(stundenplan, null, 4))
                     await newSubject()
                 } else if(fach?.trim()) {
-                    console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib ein Fach an (Nur Buchstaben, Zahlen, Unter-/Bindestriche und Leerzeichen)')
+                    console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib ein gültiges Fach an (Nur Buchstaben, Zahlen, Unter-/Bindestriche und Dollar-/Leerzeichen)')
                     await newSubject()
                 } else {
                     return
@@ -276,7 +284,9 @@ module.exports = async () => {
         var subjects = []
         for (const day in require('./data/stundenplan.json')) {
             require('./data/stundenplan.json')[day].forEach(subject => {
-                subjects.push(subject)
+                subject.split('$').forEach(subject => {
+                    subjects.push(subject)
+                })
             })
         }
         subjects = [...new Set(subjects)]
