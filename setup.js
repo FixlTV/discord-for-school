@@ -302,7 +302,7 @@ module.exports = async () => {
             console.log('\x1b[91m%s\x1b[0m', '[X]', 'Es wurden mehr als 25 unterschiedliche Fächerbezeichnungen gefunden.')
             console.log('    Bitte beachte, das Discord Choices maximal 25 Optionen unterstützen können.')
             console.log('    Die Einrichtung wird unterbrochen und der Stundenplan deaktiviert.')
-            fs.writeFileSync('data/stundenplan.save.json', fs.writeFileSync('data/stundenplan.json'))
+            fs.writeFileSync('data/stundenplan.save.json', fs.readFileSync('data/stundenplan.json'))
             fs.unlinkSync('data/stundenplan.json')
             fs.unlinkSync('data/subjects.json')
             process.exit(-1)
