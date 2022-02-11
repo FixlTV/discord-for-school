@@ -250,6 +250,8 @@ module.exports = async () => {
                             console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib auch ein zweites Fach an (Mögliche Eingabe: "Physik$Chemie")')
                             return await newSubject()
                         }
+                        if(!fach.split('$')[0]?.trim()) fach = `#$${fach.split('$')[1].trim()}`
+                        else if(!fach.split('$')[1]?.trim()) fach = `${fach.split('$')[0].trim()}$#`
                         console.log('\x1b[93m[!]\x1b[0m', `${fach.split('$')[0].trim()} wird in geraden Kalenderwochen angezeigt, ${fach.split('$')[1].trim()} in ungeraden Kalenderwochen.`)
                         fach = fach.split(/ *\$*/g).splice(0, 2).join('$')
                     }
@@ -289,7 +291,7 @@ module.exports = async () => {
                 })
             })
         }
-        subjects = [...new Set(subjects)]
+        subjects = [...new Set(subjects)].filter(s => s != '#')
         subjects = subjects.map(subject => { return { name: subject, value: subject }})
         subjects.sort(function(a, b) {
             if(a.value < b.value) return -1
