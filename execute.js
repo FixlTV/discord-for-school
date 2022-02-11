@@ -46,7 +46,7 @@ module.exports = () => global.events.on('editMessage', async (inputClient) => {
             return subject.split('$')[1 - (getCalendarWeek(datum) % 2)]
         }
         return subject
-    })
+    }).filter(s => s != '#')
 
     var embed = new discord.MessageEmbed()
         .setColor(client.color.lightblue)

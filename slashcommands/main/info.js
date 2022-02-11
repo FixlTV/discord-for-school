@@ -49,7 +49,7 @@ module.exports = {
                 return subject.split('$')[1 - (getCalendarWeek(date) % 2)]
             }
             return subject
-        })
+        }).filter(s => s != '#')
 
         let embed = new discord.MessageEmbed()
             .setColor(client.color.lightblue)
