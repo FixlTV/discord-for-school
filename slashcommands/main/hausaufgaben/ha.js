@@ -1,6 +1,9 @@
 const discord = require('discord.js')
 const { error, success } = require('../../../embeds')
 const fs = require('fs/promises')
+const getCalendarWeek = require('../../../getCalendarWeek')
+const weekday = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
+
 
 module.exports = {
     name: 'hausaufgaben',
@@ -170,7 +173,7 @@ module.exports = {
             await fs.writeFile('data/data.json', JSON.stringify(data))
             global.events.emit('editMessage')
         } else if(ita.options.getSubcommand() === 'next') {
-            var tries = 0
+            tries = 0
             /**
              * 
              * @param {String} subject 
@@ -180,38 +183,72 @@ module.exports = {
             let subject = args['fach'].value
             let todo = args['todo'].value
             let extra = args['notizen']?.value
+            var date
 
-            function getNextDate(subject, date) {
-                var weekday = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
-                var d = new Date(date)
+            var tries
+
+            function getNextDate(subject, inputDate, client) {
+                var d = new Date(inputDate)
+                d.setHours(0, 0, 0, 0)
                 d.setDate(d.getDate() + 1)
-                sp = client.stundenplan
-                while(!sp[weekday[d.getDay()]].includes(subject) && tries < 255) {
+                let sp = JSON.parse(JSON.stringify(client.stundenplan))
+
+                //Fächer formatieren
+                for (let d in sp) {
+                    sp[d].forEach((s) => {
+                        if(s.subject) return
+                        if(s.includes('$')) {
+                            let s1 = s.split('$')[0]
+                            sp[d][sp[d].indexOf(s)] = { week: 0, subject: s1 }
+                            sp[d].splice(sp[d].indexOf(s1), 0, { week: 1, subject: s.split('$')[1] })
+                        } else sp[d][sp[d].indexOf(s)] = { subject: s }
+                    })
+                }
+                
+                //Zum nächsten Möglichen Datum skippen
+                while(!sp[weekday[d.getDay()]].map(s => s.subject).includes(subject) && tries < 255) {
                     tries ++
                     d.setDate(d.getDate() + 1)
                 }
-                var holiday = false
-                if(sp[weekday[d.getDay()]].includes(subject)) {
+
+                //Überprüfen, ob die Hausaufgabe hier eingefügt wird
+                var skip = false
+                if(sp[weekday[d.getDay()]].map(s => s.subject).includes(subject)) {
+
+                    //Ferien/Feiertage
                     for (const holidays of global.holidays) {
                         let start = new Date(holidays.start)
-                        start.setHours(0)
+                        start.setHours(0, 0, 0, 0)
                         let end = new Date(holidays.end)
-                        end.setHours(0)
+                        end.setHours(0, 0, 0, 0)
                         if(start.getTime() < d.getTime() && d.getTime() < end.getTime()) {
-                            holiday = true
+                            skip = true
                             break
                         }
                     }
-                    if(global.feiertage.includes(d.toISOString().slice(0, 10))) { holiday = true; console.log(1) }
-                    if(holiday) getNextDate(subject, d.getTime())
-                    else return d
+
+
+                    //Wechselndes Fach
+                    if(sp[weekday[d.getDay()]].map(s => s.subject).includes(subject)) {
+                        //Gerade/ungerade Woche herausfinden
+                        let subjectWeek = sp[weekday[d.getDay()]].find(s => s.subject === subject).week
+                        let dateWeek = 1 - (getCalendarWeek(d) % 2)
+                        if(subjectWeek != dateWeek) skip = true
+                    } 
+                    if(global.feiertage.includes(d.toISOString().slice(0, 10))) { skip = true; console.log(1) }
+                    if(skip) getNextDate(subject, d.getTime(), client)
+                    else {
+                        date = new Date(d)
+                        return 
+                    }
                 } else if(tries >= 255) {
                     return false
                 }
             }
 
-            let date = getNextDate(subject, Date.now())
+            getNextDate(subject, Date.now(), client)
 
+            if(!date) throw new Error('could not resolve subject to date')
             let month = date.getMonth()
             let day = date.getDate()
             let has = require('../../../data/ha.json')

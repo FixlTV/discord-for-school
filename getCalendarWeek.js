@@ -1,5 +1,5 @@
 module.exports = function(date) {
-    if(!date) date = new Date()
+    date = new Date(date || Date.now())
     date.setHours(0, 0, 0, 0)
     date.setDate(date.getDate() + 4 - (date.getDay()||7))
     let yearStart = new Date(Date.UTC(date.getFullYear(),0,1))
