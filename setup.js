@@ -248,14 +248,16 @@ module.exports = async () => {
                     if(fach.includes('$')) {
                         if(!fach.split('$')[0]?.trim()) fach = `#$${fach.split('$')[1].trim()}`
                         else if(!fach.split('$')[1]?.trim()) fach = `${fach.split('$')[0].trim()}$#`
-                        console.log('\x1b[93m[!]\x1b[0m', `${fach.split('$')[0].trim()} wird in geraden Kalenderwochen angezeigt, ${fach.split('$')[1].trim()} in ungeraden Kalenderwochen.`)
+                        if(fach.trim() != '$') console.log('\x1b[93m[!]\x1b[0m', `${fach.split('$')[0].trim().replace('#', 'Kein Fach')} wird in geraden Kalenderwochen angezeigt, ${fach.split('$')[1].trim().replace('#', 'kein Fach')} in ungeraden Kalenderwochen.`)
                         fach = fach.split(/ *\$*/g).splice(0, 2).join('$')
                     }
-                    let stundenplan = require('./data/stundenplan.json')
-                    if(!stundenplan[day]) stundenplan[day] = []
-                    stundenplan[day].push(fach.trim())
-                    stundenplan[day] = [...new Set(stundenplan[day])]
-                    fs.writeFileSync('data/stundenplan.json', JSON.stringify(stundenplan, null, 4))
+                    if(fach.trim() != '$') {
+                        let stundenplan = require('./data/stundenplan.json')
+                        if(!stundenplan[day]) stundenplan[day] = []
+                        stundenplan[day].push(fach.trim())
+                        stundenplan[day] = [...new Set(stundenplan[day])]
+                        fs.writeFileSync('data/stundenplan.json', JSON.stringify(stundenplan, null, 4))
+                    }
                     await newSubject()
                 } else if(fach?.trim()) {
                     console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib ein gültiges Fach an (Nur Buchstaben, Zahlen, Unter-/Bindestriche und Dollar-/Leerzeichen)')
