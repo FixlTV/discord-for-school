@@ -20,10 +20,9 @@ module.exports = {
                     .setStyle('SECONDARY')
                     .setDisabled(true),
                 new discord.MessageButton()
-                    .setCustomId('notification_manager')
-                    .setLabel('Benachrichtigungen [WIP]')
-                    .setStyle('SECONDARY')
-                    .setDisabled(true),
+                    .setCustomId('notification_hub')
+                    .setLabel('Benachrichtigungen')
+                    .setStyle('SECONDARY'),
                 new discord.MessageButton()
                     .setCustomId('user_settings')
                     .setLabel('Einstellungen')

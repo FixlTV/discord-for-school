@@ -1,13 +1,13 @@
 const discord = require('discord.js')
 
 module.exports = {
-    id: 'user_settings',
+    id: 'notification_hub',
     execute: async (ita, client) => {
         let embed = new discord.MessageEmbed()
             .setColor(client.color.lightblue)
-            .setTitle('Einstellungen')
-            .setDescription('Hier kannst du deine Einstellungen verwalten (Weitere Folgen irgendwann)')
-
+            .setTitle('Benachrichtigungen')
+            .setDescription('Willkommen im Notification-Hub\nHier kannst du alle Benachrichtigungen einsehen und deine Einstellungen verwalten.')
+            .setFooter('Verwende die Knöpfe um fortzufahren.')
         let buttons = new discord.MessageActionRow()
             .addComponents(
                 new discord.MessageButton()
@@ -15,20 +15,14 @@ module.exports = {
                     .setLabel('❮')
                     .setStyle('DANGER'),
                 new discord.MessageButton()
-                    .setCustomId('ignored_subjects')
-                    .setLabel('Ignorierte Fächer')
+                    .setCustomId('show_notifications')
+                    .setLabel('Entgangene Benachrichtigungen')
                     .setStyle('SECONDARY'),
                 new discord.MessageButton()
-                    .setCustomId('notification_settings!settings')
-                    .setLabel('Benachrichtigungen')
+                    .setCustomId('notification_settings!hub')
+                    .setLabel('Benachrichtigungs-Einstellungen')
                     .setStyle('SECONDARY')
             )
-        if(require('../../config.json').mods?.includes(ita.user.id)) buttons.addComponents(
-            new discord.MessageButton()
-                .setCustomId('dev_settings')
-                .setLabel('Entwickler-Einstellungen')
-                .setStyle('SECONDARY')
-        )
         await ita.update({ embeds: [embed], ephemeral: true, components: [buttons] })
     }
 }
