@@ -8,7 +8,6 @@ module.exports = async () => {
     console.log('\x1b[2m%s\x1b[0m', '[ ]', 'Alle erforderlichen Daten werden nun erstellt.')
 
     if(!fs.existsSync('./data')) fs.mkdirSync('./data');
-
     console.log('\x1b[2m%s\x1b[0m', '[ ]', 'System wird nach alten Dateien durchsucht.')
     if(fs.existsSync('./test.json')) {
         fs.writeFileSync('data/test.json', fs.readFileSync('test.json'))
