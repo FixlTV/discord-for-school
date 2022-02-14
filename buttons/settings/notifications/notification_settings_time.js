@@ -5,7 +5,6 @@ const { sendtime } = require('../../../config.json')
 module.exports = {
     id: 'notification_settings_time',
     execute: async (ita, client) => {
-        if(!ita.deferred) await ita.deferUpdate({ ephemeral: true })
         const user = ita.user
         const userdata = require('../../../data/userdata.json')
         user.data = userdata[user.id]
@@ -42,8 +41,8 @@ module.exports = {
                     .setStyle('DANGER')
             )
 
-        await ita.editReply({ embeds: [embed], components: [selectMenu, buttons] })
-        const collector = ita.message.createMessageComponentCollector({componentTypes: ['SELECT_MENU'], time: 900000})
+        await ita.update({ embeds: [embed], components: [selectMenu, buttons] })
+        const collector = ita.message.createMessageComponentCollector({time: 900000})
 
         collector.on('collect', async (interaction) => {
             if(interaction.customId != 'notification_settings_time_select') return collector.stop()

@@ -22,6 +22,7 @@ module.exports = {
                     .setCustomId('notification_settings!settings')
                     .setLabel('Benachrichtigungen')
                     .setStyle('SECONDARY')
+                    .setDisabled(true),
             )
         if(require('../../config.json').mods?.includes(ita.user.id)) buttons.addComponents(
             new discord.MessageButton()
