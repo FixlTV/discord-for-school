@@ -229,13 +229,14 @@ module.exports = {
 
 
                     //Wechselndes Fach
-                    if(sp[weekday[d.getDay()]].map(s => s.subject).includes(subject)) {
+                    if(sp[weekday[d.getDay()]].map(s => s.subject).includes(subject) && sp[weekday[d.getDay()]].find(s => s.subject === subject).week) {
                         //Gerade/ungerade Woche herausfinden
                         let subjectWeek = sp[weekday[d.getDay()]].find(s => s.subject === subject).week
                         let dateWeek = 1 - (getCalendarWeek(d) % 2)
                         if(subjectWeek != dateWeek) skip = true
-                    } 
-                    if(global.feiertage.includes(d.toISOString().slice(0, 10))) { skip = true; console.log(1) }
+                    }
+                    console.log(`${d.getFullYear()}-${(() => {if(`${d.getMonth()}`.length == 1) {return '0'} else return ''})() + d.getMonth()}-${(() => {if(`${d.getDate()}`.length == 1) {return '0'} else return ''})() + d.getDate()}`)
+                    if(global.feiertage.includes(`${d.getFullYear()}-${(() => {if(`${d.getMonth()}`.length == 1) {return '0'} else return ''})() + d.getMonth()}-${(() => {if(`${d.getDate()}`.length == 1) {return '0'} else return ''})() + d.getDate()}`)) { skip = true; console.log(global.feiertage); process.exit() }
                     if(skip) getNextDate(subject, d.getTime(), client)
                     else {
                         date = new Date(d)
