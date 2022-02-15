@@ -70,8 +70,45 @@ module.exports = {
                 const userdata = require('../../../data/userdata.json')
                 userdata[user.id] = user.data
                 await fs.writeFile('data/userdata.json', JSON.stringify(userdata))
-
             }
+            embed.setFooter('Einstellungen übernommen')
+
+            hwOptions = []
+            for(let i = 1; i <= 14; i++) {
+                let option = {}
+                option.label = `${i} Tage vorher`.replace('1 Tage', '1 Tag')
+                option.value = i.toString()
+                if(user.data.notifications.types.hw.includes(i)) option.default = true
+                hwOptions.push(option)
+            }
+    
+            testOptions = []
+            for(let i = 1; i <= 14; i++) {
+                let option = {}
+                option.label = `${i} Tage vorher`.replace('1 Tage', '1 Tag')
+                option.value = i.toString()
+                if(user.data.notifications.types.test.includes(i)) option.default = true
+                testOptions.push(option)
+            }
+
+            hwMenu = new discord.MessageActionRow()
+            .addComponents(
+                new discord.MessageSelectMenu()
+                    .setCustomId('notification_types_hw')
+                    .setPlaceholder('Hausaufgaben')
+                    .addOptions(hwOptions)
+                    .setMaxValues(14)
+            )
+            testMenu = new discord.MessageActionRow()
+                .addComponents(
+                    new discord.MessageSelectMenu()
+                        .setCustomId('notification_types_test')
+                        .setPlaceholder('Tests')
+                        .addOptions(testOptions)
+                        .setMaxValues(14)
+                )
+
+            await interaction.update({ embeds: [embed], components: [hwMenu, testMenu, buttons], ephemeral: true })
         })
     }
 }

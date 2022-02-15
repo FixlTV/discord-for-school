@@ -68,7 +68,7 @@ module.exports = {
                         .addOptions(options)
                     )
             
-            await interaction.update({ embeds: [embed.setFooter('Eingabe gespeichert.')], components: [selectMenu, buttons], ephemeral: true })
+            await interaction.update({ embeds: [embed.setFooter('Einstellungen übernommen.')], components: [selectMenu, buttons], ephemeral: true })
         })
     }
 }

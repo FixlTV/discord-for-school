@@ -21,9 +21,9 @@ module.exports = {
                     .setDisabled(true),
                 new discord.MessageButton()
                     .setCustomId('notification_hub')
-                    .setLabel('Benachrichtigungen [WIP]')
+                    .setLabel('Benachrichtigungen')
                     .setStyle('SECONDARY')
-                    .setDisabled(true),
+                    .setDisabled(false),
                 new discord.MessageButton()
                     .setCustomId('user_settings')
                     .setLabel('Einstellungen')
