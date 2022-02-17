@@ -38,24 +38,23 @@ module.exports = {
      * @returns 
      */
     async run(ita, args, client) {
-        var userdata = require('../../userdata.json')
+        var userdata = require('../../data/userdata.json')
         if(ita.options.getSubcommand() === 'delete') {
             if(!userdata[ita.user.id] || !userdata[ita.user.id].gb) return error(ita, 'Kein Geburtstag', 'Du hast keinen Geburtstag gesetzt. Folglich wurde auch nichts gelöscht.')
             else delete userdata[ita.user.id].gb
             await ita.deferReply({ ephemeral: true })
-            await require('fs/promises').writeFile('userdata.json', JSON.stringify(userdata))
+            await require('fs/promises').writeFile('data/userdata.json', JSON.stringify(userdata))
             success(ita, 'Geburtstag gelöscht', 'Dein Geburtstag wurde aus dem System gelöscht.')
             global.events.emit('editMessage')
         } else if(ita.options.getSubcommand() === 'set') {
             await ita.deferReply({ ephemeral: true })
-            if(!userdata[ita.user.id]) userdata[ita.user.id] = {}
             var d = new Date(2020, args.monat.value - 1, args.tag.value)
             userdata[ita.user.id].gb = {
                 day: d.getDate(),
                 month: d.getMonth() + 1
             }
             let months = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember']
-            await require('fs/promises').writeFile('userdata.json', JSON.stringify(userdata))
+            await require('fs/promises').writeFile('data/userdata.json', JSON.stringify(userdata))
             success(ita, 'Geburtstag gespeichert', `Dein Geburtstag wurde am ${d.getDate()}. ${months[d.getMonth()]} gespeichert.`)
             global.events.emit('editMessage')
         }

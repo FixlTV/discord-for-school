@@ -11,7 +11,7 @@ module.exports = {
      */
     async run(ita, args, client) {
         await ita.deferReply({ ephemeral: true })
-        const tests = require('../../../test.json')
+        const tests = require('../../../data/test.json')
         var testarray = []
         for(var month in tests) {
             var dates = tests[month]
@@ -21,7 +21,7 @@ module.exports = {
                     var test = subjects[subject]
                     let datex = new Date()
                     datex.setMonth(month, date)
-                    datex.setHours(0, 0, 0, 0)
+                    datex.setHours(23, 59, 59, 999)
                     if(Date.now() > datex.getTime()) datex.setFullYear(datex.getFullYear() + 1)
                     testarray.push({
                         subject: subject,

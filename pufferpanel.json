@@ -1,0 +1,33 @@
+{
+  "name": "discord-for-school",
+  "display": "discord-for-school",
+  "type": "node-js",
+  "install": [
+    {
+      "commands": [
+        "git clone https://github.com/FixlTV/discord-for-school .",
+        "git fetch origin",
+        "git reset --hard origin/main",
+        "npm i"
+      ],
+      "type": "command"
+    }
+  ],
+  "run": {
+    "stop": "",
+    "command": "node index.js",
+    "workingDirectory": "",
+    "pre": [],
+    "post": [],
+    "environmentVars": {}
+  },
+  "data": {},
+  "environment": {
+    "type": "standard"
+  },
+  "supportedEnvironments": [
+    {
+      "type": "standard"
+    }
+  ]
+}

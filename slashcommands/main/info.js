@@ -1,4 +1,5 @@
 const discord = require('discord.js')
+const getCalendarWeek = require('../../getCalendarWeek')
 
 const weekday = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
 
@@ -28,9 +29,9 @@ module.exports = {
         month = date.getMonth()
         day = date.getDate()
 
-        const userdata = require('../../userdata.json')
-        const test = require('../../test.json')
-        const has = require('../../ha.json')
+        const userdata = require('../../data/userdata.json')
+        const test = require('../../data/test.json')
+        const has = require('../../data/ha.json')
 
         var geburtstage = []
         for(var k in userdata) {
@@ -41,12 +42,20 @@ module.exports = {
                 }
             }
         }
+        
+        let subjects = client.stundenplan[weekday[date.getDay()]]
+        subjects = subjects.map((subject) => {
+            if(subject.includes('$')) {
+                return subject.split('$')[1 - (getCalendarWeek(date) % 2)]
+            }
+            return subject
+        }).filter(s => s != '#')
 
         let embed = new discord.MessageEmbed()
             .setColor(client.color.lightblue)
             .setTitle(weekday[date.getDay()])
             .setDescription(`Informationen für ${weekday[date.getDay()]}, den ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`)
-            .addField('Fächer', client.stundenplan[weekday[date.getDay()]].join('\n'))
+            .addField('Fächer', subjects.join('\n') || 'Keine')
         if(geburtstage[0]) embed.addField('Geburtstage', geburtstage.join('\n'))
         if(test[month]?.[day]) {
             var tests = []

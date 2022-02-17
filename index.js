@@ -1,12 +1,11 @@
 const discord = require('discord.js');
-const client  = new discord.Client({ intents: 1 << 14 })
+const client  = new discord.Client({ intents: ['GUILDS', 'GUILD_EMOJIS_AND_STICKERS', 'DIRECT_MESSAGES'] })
 const fs = require('fs');
 
 (async () => {
-    if(!fs.existsSync('./test.json') || !fs.existsSync('./ha.json') || !fs.existsSync('./userdata.json') || !fs.existsSync('./data.json') || !fs.existsSync('./config.json') || !fs.existsSync('./stundenplan.json')) await require('./setup.js')()
+    if(!fs.existsSync('data/test.json') || !fs.existsSync('data/ha.json') || !fs.existsSync('data/userdata.json') || !fs.existsSync('data/data.json') || !fs.existsSync('./config.json') || !fs.existsSync('data/stundenplan.json') || !fs.existsSync('data/subjects.json') || !fs.existsSync('data/testtypes.json')) await require('./setup.js')()
+    if((require('./config.template.json').length != Object.keys(require('./config.json')).length) || (require('./config.json').vtp & !fs.existsSync('vertretungsplan.js'))) await require('./setup.js')()
     const config  = require('./config.json')
-    const eventhandler = require('./eventhandler')
-    const slashhandler = require('./slashhandler')
     const { default: axios } = require('axios')
     const Emitter = require('events').EventEmitter
 
@@ -35,7 +34,7 @@ const fs = require('fs');
 
         //add useless properties to the client
         client.color = config.color
-        client.stundenplan = require('./stundenplan.json')
+        client.stundenplan = require('./data/stundenplan.json')
         client.slashCommands = new discord.Collection()
 
         //fetch the daily logging channel
@@ -50,9 +49,9 @@ const fs = require('fs');
 
         require('./execute')()
         global.events.emit('editMessage', client)
-        await require('./commandhandler')(client)
-        await slashhandler(client)
-        await eventhandler(client)
+        await require('./slashhandler')(client)
+        await require('./buttonhandler')(client)
+        await require('./eventhandler')(client)
         client.user.setStatus('online')
     })
 

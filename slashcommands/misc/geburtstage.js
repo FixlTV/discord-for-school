@@ -12,7 +12,7 @@ module.exports = {
     async run(ita, args, client) {
         console.log(ita.user)
         await ita.deferReply({ ephemeral: true })
-        const userdata = require('../../userdata.json')
+        const userdata = require('../../data/userdata.json')
         var gbs = {}
         for (var key in userdata) {
             data = userdata[key]

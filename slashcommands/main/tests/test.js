@@ -41,104 +41,14 @@ module.exports = {
                     description: 'Fach, in dem der Test geschrieben wird',
                     type: 'STRING',
                     required: true,
-                    choices: [
-                        {
-                            name: 'Deutsch',
-                            value: '1'
-                        },
-                        {
-                            name: 'Mathematik',
-                            value: '2'
-                        },
-                        {
-                            name: 'Englisch',
-                            value: '3'
-                        },
-                        {
-                            name: 'Physik',
-                            value: '4'
-                        },
-                        {
-                            name: 'Chemie',
-                            value: '5'
-                        },
-                        {
-                            name: 'Biologie',
-                            value: '6'
-                        },
-                        {
-                            name: 'Informatik',
-                            value: '7'
-                        },
-                        {
-                            name: 'Evangelisch',
-                            value: '8'
-                        },
-                        {
-                            name: 'Katholisch',
-                            value: '9'
-                        },
-                        {
-                            name: 'Ethik',
-                            value: '10'
-                        },
-                        {
-                            name: 'Französisch',
-                            value: '11'
-                        },
-                        {
-                            name: 'Latein',
-                            value: '12'
-                        },
-                        {
-                            name: 'Geographie',
-                            value: '13'
-                        },
-                        {
-                            name: 'Geschichte',
-                            value: '14'
-                        },
-                        {
-                            name: 'Wirtschaft und Recht',
-                            value: '15'
-                        },
-                        {
-                            name: 'Sozialkunde',
-                            value: '16'
-                        },
-                        {
-                            name: 'Musik',
-                            value: '17'
-                        },
-                        {
-                            name: 'Kunst',
-                            value: '18'
-                        }
-                    ]
+                    choices: require('../../../data/subjects.json')
                 },
                 {
                     name: 'testart',
                     description: 'Art des Tests, der geschrieben wird',
                     type: 'STRING',
                     required: true,
-                    choices: [
-                        {
-                            name: 'Schulaufgabe',
-                            value: 'Schulaufgabe'
-                        },
-                        {
-                            name: 'Test',
-                            value: 'Test'
-                        },
-                        {
-                            name: 'Ex',
-                            value: 'Ex'
-                        },
-                        {
-                            name: 'Sonstige',
-                            value: 'Unbekannt'
-                        }
-                    ]
+                    choices: require("../../../data/testtypes.json")
                 },
                 {
                     name: 'tag',
@@ -164,80 +74,7 @@ module.exports = {
                     description: 'Fach, in dem der Test geschrieben wird',
                     type: 'STRING',
                     required: true,
-                    choices: [
-                        {
-                            name: 'Deutsch',
-                            value: '1'
-                        },
-                        {
-                            name: 'Mathematik',
-                            value: '2'
-                        },
-                        {
-                            name: 'Englisch',
-                            value: '3'
-                        },
-                        {
-                            name: 'Physik',
-                            value: '4'
-                        },
-                        {
-                            name: 'Chemie',
-                            value: '5'
-                        },
-                        {
-                            name: 'Biologie',
-                            value: '6'
-                        },
-                        {
-                            name: 'Informatik',
-                            value: '7'
-                        },
-                        {
-                            name: 'Evangelisch',
-                            value: '8'
-                        },
-                        {
-                            name: 'Katholisch',
-                            value: '9'
-                        },
-                        {
-                            name: 'Ethik',
-                            value: '10'
-                        },
-                        {
-                            name: 'Französisch',
-                            value: '11'
-                        },
-                        {
-                            name: 'Latein',
-                            value: '12'
-                        },
-                        {
-                            name: 'Geographie',
-                            value: '13'
-                        },
-                        {
-                            name: 'Geschichte',
-                            value: '14'
-                        },
-                        {
-                            name: 'Wirtschaft und Recht',
-                            value: '15'
-                        },
-                        {
-                            name: 'Sozialkunde',
-                            value: '16'
-                        },
-                        {
-                            name: 'Musik',
-                            value: '17'
-                        },
-                        {
-                            name: 'Kunst',
-                            value: '18'
-                        }
-                    ]
+                    choices: require('../../../data/subjects.json')
                 },
                 {
                     name: 'tag',
@@ -263,7 +100,7 @@ module.exports = {
     async run(ita, args, client) {
         await ita.deferReply({ ephemeral: true })
         if(ita.options.getSubcommand() === 'add') {
-            var subject = resolveSubject(args['fach'].value)
+            var subject = args['fach'].value
             var testtype = args['testart'].value
             var day = args['tag'].value
             var month = Number(args['monat'].value) - 1
@@ -272,19 +109,15 @@ module.exports = {
             date.setMonth(month, day)
             date.setHours(0, 0, 0, 0)
             if(Date.now() >= date.getTime()) date.setFullYear(date.getFullYear() + 1)
-            var test = require('../../../test.json')
+            var test = require('../../../data/test.json')
             if(!test[date.getMonth()]) test[date.getMonth()] = {}
             if(!test[date.getMonth()][date.getDate()]) test[date.getMonth()][date.getDate()] = {}
             test[date.getMonth()][date.getDate()][subject] = testtype
-            await fs.writeFile('test.json', JSON.stringify(test))
-            let e = ''
-            if(testtype === "Schulaufgabe" || "Ex") e = 'e'
-            let text = 'Test'
-            if(testtype === "Schulaufgabe" || "Ex") text = testtype
+            await fs.writeFile('data/test.json', JSON.stringify(test))
             global.events.emit('editMessage')
-            return success(ita, `${text} hinzugefügt`, `Ein${e} ${subject} ${text} wurde am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} hinzugefügt.`)
+            return success(ita, `Test hinzugefügt`, `Ein ${subject} Test (${testtype}) wurde am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} hinzugefügt.`)
         } else {
-            var subject = resolveSubject(args['fach'].value)
+            var subject = args.fach.value
             var day = args['tag'].value
             var month = Number(args['monat'].value) - 1
             var date = new Date()
@@ -292,18 +125,14 @@ module.exports = {
             date.setMonth(month, day)
             date.setHours(0, 0, 0, 0)
             if(Date.now() >= date.getTime()) date.setFullYear(date.getFullYear() + 1)
-            var test = require('../../../test.json')
+            var test = require('../../../data/test.json')
             if(!test[date.getMonth()] || !test[date.getMonth()][date.getDate()] || !test[date.getMonth()][date.getDate()][subject]) return error(ita, 'Fehler', `An diesem Tag wird kein ${subject} Test geschrieben.`)
             let testtype = test[date.getMonth()][date.getDate()][subject]
-            let e = 'Der'
-            if(testtype === "Schulaufgabe" || "Ex") e = 'Die'
-            let text = 'Test'
-            if(testtype === "Schulaufgabe" || "Ex") text = testtype
             delete test[date.getMonth()][date.getDate()][subject]
             if(test[date.getMonth()][date.getDate()] == {}) delete test[date.getMonth()][date.getDate()]
-            await fs.writeFile('test.json', JSON.stringify(test))
+            await fs.writeFile('data/test.json', JSON.stringify(test))
             global.events.emit('editMessage')
-            return success(ita, `${text} gelöscht`, `${e} ${subject} ${text} am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} wurde gelöscht.`)
+            return success(ita, `Test gelöscht`, `Der ${subject} Test (${testtype}) am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} wurde gelöscht.`)
         }
     }
 }
