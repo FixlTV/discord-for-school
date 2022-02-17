@@ -6,7 +6,7 @@ module.exports = {
         let embed = new discord.MessageEmbed()
             .setColor(client.color.lightblue)
             .setTitle('Benachrichtigungen')
-            .setDescription('Willkommen im Notification-Hub\nHier kannst du alle Benachrichtigungen einsehen und deine Einstellungen verwalten.')
+            .setDescription('Willkommen im Notification-Hub\nHier kannst du (aktuell nur) deine Einstellungen verwalten.')
             .setFooter('Verwende die Knöpfe um fortzufahren.')
         let buttons = new discord.MessageActionRow()
             .addComponents(
@@ -14,10 +14,10 @@ module.exports = {
                     .setCustomId('main_menu')
                     .setLabel('❮')
                     .setStyle('DANGER'),
-                new discord.MessageButton()
-                    .setCustomId('show_notifications')
-                    .setLabel('Entgangene Benachrichtigungen')
-                    .setStyle('SECONDARY'),
+                // new discord.MessageButton()
+                //     .setCustomId('show_notifications')
+                //     .setLabel('Entgangene Benachrichtigungen')
+                //     .setStyle('SECONDARY'),
                 new discord.MessageButton()
                     .setCustomId('notification_settings!hub')
                     .setLabel('Benachrichtigungs-Einstellungen')

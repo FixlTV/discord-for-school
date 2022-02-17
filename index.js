@@ -1,5 +1,5 @@
 const discord = require('discord.js');
-const client  = new discord.Client({ intents: 1 << 14 })
+const client  = new discord.Client({ intents: ['GUILDS', 'GUILD_EMOJIS_AND_STICKERS', 'DIRECT_MESSAGES'] })
 const fs = require('fs');
 
 (async () => {

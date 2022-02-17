@@ -235,8 +235,7 @@ module.exports = {
                         let dateWeek = 1 - (getCalendarWeek(d) % 2)
                         if(subjectWeek != dateWeek) skip = true
                     }
-                    console.log(`${d.getFullYear()}-${(() => {if(`${d.getMonth()}`.length == 1) {return '0'} else return ''})() + d.getMonth()}-${(() => {if(`${d.getDate()}`.length == 1) {return '0'} else return ''})() + d.getDate()}`)
-                    if(global.feiertage.includes(`${d.getFullYear()}-${(() => {if(`${d.getMonth()}`.length == 1) {return '0'} else return ''})() + d.getMonth()}-${(() => {if(`${d.getDate()}`.length == 1) {return '0'} else return ''})() + d.getDate()}`)) { skip = true; console.log(global.feiertage); process.exit() }
+                    if(global.feiertage.includes(`${d.getFullYear()}-${(() => {if(`${d.getMonth()}`.length == 1) {return '0'} else return ''})() + d.getMonth()}-${(() => {if(`${d.getDate()}`.length == 1) {return '0'} else return ''})() + d.getDate()}`)) { skip = true }
                     if(skip) getNextDate(subject, d.getTime(), client)
                     else {
                         date = new Date(d)
