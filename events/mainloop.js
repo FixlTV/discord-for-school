@@ -11,7 +11,7 @@ module.exports = {
      */
     async on(client) {
         var dold = new Date()
-        // setInterval(async () => {
+        setInterval(async () => {
             const config = require('../config.json')
             const d = new Date()
             let deletedHomework = []
@@ -129,6 +129,6 @@ module.exports = {
                 }
             }
             dold = new Date()
-        // }, 30000, dold)
+        }, 30000, dold)
     }
 }
