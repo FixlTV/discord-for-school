@@ -163,6 +163,8 @@ module.exports = async () => {
 
     async function getVtp() { return await ynQuestion('\x1b[93m[!]\x1b[0m Vertretungsplan verwenden?') }
 
+    async function getEvents() { return await ynQuestion('\x1b[93m[!]\x1b[0m Events für Tests erstellen?') }
+
     if(!fs.existsSync('./config.json')) {
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'config.json wird angelegt.')
 
@@ -178,6 +180,8 @@ module.exports = async () => {
         let state = await getState()
 
         let vtp = await getVtp()
+        
+        let events = await getEvents()
 
         let config = {
             token,
@@ -191,7 +195,8 @@ module.exports = async () => {
             channel,
             sendtime: sendTime,
             state,
-            vtp
+            vtp,
+            events
         }
 
         client.destroy()
@@ -209,11 +214,12 @@ module.exports = async () => {
             channel: getChannel,
             mods: getMods,
             state: getState,
-            vtp: getVtp
+            vtp: getVtp,
+            events: getEvents
         }
         for await (let key of require('./config.template.json')) {
             if(!config[key] && config[key] !== false) {
-                if(!changed && changed != false) {
+                if(!changed) {
                     console.log('\x1b[91m%s\x1b[0m', '[X]', 'Config unvollständig!')
                     changed = true
                 }
