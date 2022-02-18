@@ -1,6 +1,7 @@
 const discord = require('discord.js')
-const { error, success } = require('../../../embeds')
+const { error, success, warn } = require('../../../embeds')
 const fs = require('fs/promises')
+const {events: useEvents} = require('../../../config.json')
 
 function resolveSubject(int) {
     var subjects = {
@@ -27,70 +28,85 @@ function resolveSubject(int) {
     return subject
 }
 
+const options =  [
+    {
+        type: 'SUB_COMMAND',
+        name: 'add',
+        description: 'Fügt einen Test hinzu.',
+        options: [
+            {
+                name: 'fach',
+                description: 'Fach, in dem der Test geschrieben wird',
+                type: 'STRING',
+                required: true,
+                choices: require('../../../data/subjects.json')
+            },
+            {
+                name: 'testart',
+                description: 'Art des Tests, der geschrieben wird',
+                type: 'STRING',
+                required: true,
+                choices: require("../../../data/testtypes.json")
+            },
+            {
+                name: 'tag',
+                description: 'Tag im Monat, an dem der Test geschrieben wird',
+                type: 'INTEGER',
+                required: true
+            },
+            {
+                name: 'monat',
+                description: 'Monat, in dem der Test geschrieben wird.',
+                type: 'INTEGER',
+                required: true
+            }
+        ]
+    },
+    {
+        type: 'SUB_COMMAND',
+        name: 'remove',
+        description: 'Entfernet einen Test.',
+        options: [
+            {
+                name: 'fach',
+                description: 'Fach, in dem der Test geschrieben wird',
+                type: 'STRING',
+                required: true,
+                choices: require('../../../data/subjects.json')
+            },
+            {
+                name: 'tag',
+                description: 'Tag im Monat, an dem der Test geschrieben wird',
+                type: 'INTEGER',
+                required: true
+            },
+            {
+                name: 'monat',
+                description: 'Monat, in dem der Test geschrieben wird.',
+                type: 'INTEGER',
+                required: true
+            }
+        ]
+    }
+]
+
+if(useEvents) options[0].options.push({
+    name: 'uhrzeit',
+    description: 'Uhrzeit (in Stunden) des Tests. Benötigt für ein Event. Standardmäßig 8 Uhr.',
+    type: 'INTEGER',
+    required: false
+},
+{
+    name: 'dauer',
+    description: 'Dauer (in Stunden) des Tests. Benötigt für ein Event. Standardmäßig 1 Stunde.',
+    type: 'INTEGER',
+    required: false
+})
+
 module.exports = {
     name: 'test',
     description: 'Trägt Tests ein oder löscht diese.',
-    options: [
-        {
-            type: 'SUB_COMMAND',
-            name: 'add',
-            description: 'Fügt einen Test hinzu.',
-            options: [
-                {
-                    name: 'fach',
-                    description: 'Fach, in dem der Test geschrieben wird',
-                    type: 'STRING',
-                    required: true,
-                    choices: require('../../../data/subjects.json')
-                },
-                {
-                    name: 'testart',
-                    description: 'Art des Tests, der geschrieben wird',
-                    type: 'STRING',
-                    required: true,
-                    choices: require("../../../data/testtypes.json")
-                },
-                {
-                    name: 'tag',
-                    description: 'Tag im Monat, an dem der Test geschrieben wird',
-                    type: 'INTEGER',
-                    required: true
-                },
-                {
-                    name: 'monat',
-                    description: 'Monat, in dem der Test geschrieben wird.',
-                    type: 'INTEGER',
-                    required: true
-                }
-            ]
-        },
-        {
-            type: 'SUB_COMMAND',
-            name: 'remove',
-            description: 'Entfernet einen Test.',
-            options: [
-                {
-                    name: 'fach',
-                    description: 'Fach, in dem der Test geschrieben wird',
-                    type: 'STRING',
-                    required: true,
-                    choices: require('../../../data/subjects.json')
-                },
-                {
-                    name: 'tag',
-                    description: 'Tag im Monat, an dem der Test geschrieben wird',
-                    type: 'INTEGER',
-                    required: true
-                },
-                {
-                    name: 'monat',
-                    description: 'Monat, in dem der Test geschrieben wird.',
-                    type: 'INTEGER',
-                    required: true
-                }
-            ]
-        }
-    ],
+    options,
     /**
      * 
      * @param {discord.CommandInteraction} ita 
@@ -98,7 +114,7 @@ module.exports = {
      * @param {discord.Client} client 
      */
     async run(ita, args, client) {
-        await ita.deferReply({ ephemeral: true })
+        try {await ita.deferReply({ ephemeral: true })} catch {}
         if(ita.options.getSubcommand() === 'add') {
             var subject = args['fach'].value
             var testtype = args['testart'].value
@@ -115,7 +131,23 @@ module.exports = {
             test[date.getMonth()][date.getDate()][subject] = testtype
             await fs.writeFile('data/test.json', JSON.stringify(test))
             global.events.emit('editMessage')
-            return success(ita, `Test hinzugefügt`, `Ein ${subject} Test (${testtype}) wurde am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} hinzugefügt.`)
+            if(useEvents) {
+                if(!args.uhrzeit) args.uhrzeit = { value: 8 }
+                if(!args.dauer) args.dauer = { value: 1 }
+                if(args.uhrzeit.value > 24 || args.uhrzeit.value < 0) return await warn(ita, 'Syntaxfehler', `\`Uhrzeit\` muss eine Zahl zwischen 0 und 24 sein.\nDas Event wird nicht erstellt; der ${subject} Test (${testtype}) am ${day}.${month}. wurde gespeichert.`)
+                if(args.dauer.value < 1 || args.dauer.value > 7) return await warn(ita, 'Syntaxfehler', `\`Dauer\` muss eine Zahl zwischen 1 und 7 sein.\nDas Event wird nicht erstellt; der ${subject} Test (${testtype}) am ${day}.${month}. wurde gespeichert.`)
+                let eventData = {
+                    name: `${subject} | ${testtype}`,
+                    scheduledStartTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), args.uhrzeit.value, 0, 0, 0),
+                    scheduledEndTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), args.uhrzeit.value + args.dauer.value, 0, 0, 0),
+                    entityType: 'EXTERNAL',
+                    privacyLevel: 'GUILD_ONLY',
+                    reason: `Test hinzugefügt von ${ita.user.tag}`,
+                    entityMetadata: {location: useEvents}
+                }
+                await ita.guild.scheduledEvents.create(eventData)
+            }
+            return await success(ita, `Test hinzugefügt`, `Ein ${subject} Test (${testtype}) wurde am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} hinzugefügt.`)
         } else {
             var subject = args.fach.value
             var day = args['tag'].value

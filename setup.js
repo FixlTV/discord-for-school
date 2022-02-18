@@ -163,8 +163,7 @@ module.exports = async () => {
 
     async function getVtp() { return await ynQuestion('\x1b[93m[!]\x1b[0m Vertretungsplan verwenden?') }
 
-    async function getEvents() { return await ynQuestion('\x1b[93m[!]\x1b[0m Events für Tests erstellen?') }
-
+    async function getEvents() { if(await ynQuestion('\x1b[93m[!]\x1b[0m Events für Tests erstellen?')) return await question('\x1b[93m[!]\x1b[0m Bitte Namen der Schule eingeben (Benötigt für Events):\n >  '); return false }
     if(!fs.existsSync('./config.json')) {
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'config.json wird angelegt.')
 
