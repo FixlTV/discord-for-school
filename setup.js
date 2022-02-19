@@ -1,6 +1,7 @@
 const readline = require('readline');
 const fs = require('fs');
 const { Client } = require('discord.js');
+const WebUntis = require('webuntis')
 
 module.exports = async () => {
     console.log('\x1b[36m%s\x1b[0m', 'Willkommen beim Setup Assistenten!');
@@ -164,8 +165,6 @@ module.exports = async () => {
     async function getVtp() { return await ynQuestion('\x1b[93m[!]\x1b[0m Vertretungsplan verwenden?') }
 
     async function getLogin(r) {
-        const webuntis = require('webuntis')
-
         if(!r) console.log('\x1b[93m[!]\x1b[0m Bitte Untis-Logindaten eingeben (Hilfe: https://github.com/FixlTV/discord-for-school/wiki/Untis#setup):')
         let username = await question('\x1b[93m[!]\x1b[0m Nutzername: ')
         let password = await question('\x1b[93m[!]\x1b[0m Passwort:   ')
@@ -174,7 +173,7 @@ module.exports = async () => {
         if(!server.split('.')?.[1]) server += '.webuntis.com'
         server = server.replaceAll('https://', '').replaceAll('http://', '').split('/')[0]
 
-        const untis = new webuntis(school, username, password, server)
+        const untis = new WebUntis(school, username, password, server)
         try { await untis.login() } catch (err) {
             console.error(err)
             console.error('\x1b[91m%s\x1b[0m', '[X]', 'Anmeldedaten ungültig. Bitte überprüfe deine Angaben.')
@@ -260,48 +259,45 @@ module.exports = async () => {
     if(require('./config.json').vtp && !fs.existsSync('vertretungsplan')) fs.mkdirSync('vertretungsplan')
 
     if(!fs.existsSync('data/stundenplan.json')) {
-        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'stundenplan.json wird angelegt.')
-        fs.writeFileSync('data/stundenplan.json', '{"Montag": [], "Dienstag": [], "Mittwoch": [], "Donnerstag": [], "Freitag": [], "Samstag": [], "Sonntag": []}')
-        console.log('\x1b[93m%s\x1b[0m', '[!]', 'Bitte jedes Fach für jeden Tag \x1b[1meinmal\x1b[0m eingeben. Zum Speichern des Tages "Enter" drücken.\n    Nach dem Speichern eines Tages kann er nicht weiter bearbeitet werden.\n    Wenn zwei Fächer im wöchentlichen Wechsel vorkommen, trenne die beiden mit einem "$"-Zeichen.')
+        console.log('\x1b[2m%s\x1b[0m', '[ ]', 'Stundenplan wird heruntergeladen...')
 
-        const weekday = [ 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag' ]
+        const sp = {}
+        const weekday = [ 'Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag' ]
 
-        for (const day of weekday) {
-            console.log('\x1b[93m[!]\x1b[0m', 'Bitte Fächer für', day, 'eingeben')
+        const { login } = require('./config.json')
+        const untis = new WebUntis(login.school, login.username, login.password, login.server)
+        await untis.login()
+        let date = new Date()
+        while(date.getDay()) date.setDate(date.getDate() + 1)
+        date.setDate(date.getDate())
 
-            async function newSubject() {
-                let fach = await question(`\x1b[93m[!]\x1b[0m Bitte Fach (${day}) eingeben\n >  `)
-                if(fach && fach.trim().match(/[\w -$]+/g)) {
-                    if(fach.includes('$')) {
-                        if(!fach.split('$')[0]?.trim()) fach = `#$${fach.split('$')[1].trim()}`
-                        else if(!fach.split('$')[1]?.trim()) fach = `${fach.split('$')[0].trim()}$#`
-                        if(fach.trim() != '$') console.log('\x1b[93m[!]\x1b[0m', `${fach.split('$')[0].trim().replace('#', 'Kein Fach')} wird in geraden Kalenderwochen angezeigt, ${fach.split('$')[1].trim().replace('#', 'kein Fach')} in ungeraden Kalenderwochen.`)
-                        fach = fach.split(/ *\$*/g).splice(0, 2).join('$')
-                    }
-                    if(fach.trim() != '$') {
-                        let stundenplan = require('./data/stundenplan.json')
-                        if(!stundenplan[day]) stundenplan[day] = []
-                        stundenplan[day].push(fach.trim())
-                        stundenplan[day] = [...new Set(stundenplan[day])]
-                        fs.writeFileSync('data/stundenplan.json', JSON.stringify(stundenplan, null, 4))
-                    }
-                    await newSubject()
-                } else if(fach?.trim()) {
-                    console.log('\x1b[91m%s\x1b[0m', '[X]', 'Bitte gib ein gültiges Fach an (Nur Buchstaben, Zahlen, Unter-/Bindestriche und Dollar-/Leerzeichen)')
-                    await newSubject()
-                } else {
-                    return
-                }
+        async function getSubjects(date) {
+            let data
+            try { data = await untis.getOwnClassTimetableFor(date) } catch(err) {
+                date.setDate(date.getDate() + 7)
+                data = await getSubjects(date)
+                date.setDate(date.getDate() - 7)
+                return data
             }
-
-            await newSubject()
-            if(!require('./data/stundenplan.json')[day]) {
-                let stundenplan = require('./data/stundenplan.json')
-                stundenplan[day] = []
-                fs.writeFileSync('data/stundenplan.json', JSON.stringify(stundenplan, null, 4))
-            }
+            return data
+                .map(x => {
+                    return {
+                        start: x.startTime,
+                        end: x.endTime,
+                        subject: x.su[0]?.longname
+                    }
+                }).sort((a, b) => (a.start > b.start) ? 1 : (a.start == b.start) ? 0 : -1)
         }
 
+        for (const day of weekday) {
+            const i = weekday.indexOf(day)
+            while(date.getDay() != i) {date.setDate(date.getDate() + 1)}
+            if(!sp[day]?.length) sp[day] = []
+            sp[day] = sp[day].concat(await getSubjects(date))
+            // sp[day] = new Set(sp[day])
+        }
+
+        fs.writeFileSync('data/stundenplan.json', JSON.stringify(sp, null, 4))
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Stundenplan gespeichert')
     }
 
@@ -310,30 +306,15 @@ module.exports = async () => {
 
         var subjects = []
         for (const day in require('./data/stundenplan.json')) {
-            require('./data/stundenplan.json')[day].forEach(subject => {
-                subject.split('$').forEach(subject => {
-                    subjects.push(subject)
-                })
+            require('./data/stundenplan.json')[day].forEach(s => {
+                subjects.push(s.subject)
             })
         }
-        subjects = [...new Set(subjects)].filter(s => s != '#')
-        subjects = subjects.map(subject => { return { name: subject, value: subject }})
-        subjects.sort(function(a, b) {
-            if(a.value < b.value) return -1
-            if(a.value > b.value) return 1
-            return 0
-        })
+        subjects = [...new Set(subjects)]
+        subjects = subjects
+            .map(subject => { return { name: subject, value: subject } })
+            .sort((a, b) => (a.value < b.value) ? -1 : (a.value > b.value) ? 1 : 0)
         fs.writeFileSync('data/subjects.json', JSON.stringify(subjects))
-
-        if(subjects.length > 25) {
-            console.log('\x1b[91m%s\x1b[0m', '[X]', 'Es wurden mehr als 25 unterschiedliche Fächerbezeichnungen gefunden.')
-            console.log('    Bitte beachte, das Discord Choices maximal 25 Optionen unterstützen können.')
-            console.log('    Die Einrichtung wird unterbrochen und der Stundenplan deaktiviert.')
-            fs.writeFileSync('data/stundenplan.save.json', fs.readFileSync('data/stundenplan.json'))
-            fs.unlinkSync('data/stundenplan.json')
-            fs.unlinkSync('data/subjects.json')
-            process.exit(-1)
-        }
 
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'subjects.json wurde angelegt.')
     }

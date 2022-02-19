@@ -19,7 +19,7 @@ module.exports = {
                     description: 'Fach, in dem der Test geschrieben wird',
                     type: 'STRING',
                     required: true,
-                    choices: require('../../../data/subjects.json')
+                    autocomplete: true
                 },
                 {
                     name: 'tag',
@@ -57,7 +57,7 @@ module.exports = {
                     description: 'Fach, in dem der Test geschrieben wird',
                     type: 'STRING',
                     required: true,
-                    choices: require('../../../data/subjects.json')
+                    autocomplete: true
                 },
                 {
                     name: 'todo',
