@@ -3,31 +3,6 @@ const { error, success, warn } = require('../../../embeds')
 const fs = require('fs/promises')
 const {events: useEvents} = require('../../../config.json')
 
-function resolveSubject(int) {
-    var subjects = {
-        '1': 'Deutsch',
-        '2': 'Mathematik',
-        '3': 'Englisch',
-        '4': 'Physik',
-        '5': 'Chemie',
-        '6': 'Biologie',
-        '7': 'Informatik',
-        '8': 'Evangelisch',
-        '9': 'Katholisch',
-        '10': 'Ethik',
-        '11': 'Französisch',
-        '12': 'Latein',
-        '13': 'Geographie',
-        '14': 'Geschichte',
-        '15': 'Wirtschaft und Recht',
-        '16': 'Sozialkunde',
-        '17': 'Musik',
-        '18': 'Kunst'
-    }
-    var subject = subjects[int]
-    return subject
-}
-
 const options =  [
     {
         type: 'SUB_COMMAND',
