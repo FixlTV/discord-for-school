@@ -48,7 +48,7 @@ module.exports = async function (client) {
 
             await command.run(ita, args, client).catch(error => {
                 console.error(error)
-                require('./embeds').error(ita, 'Fehler', 'Ein unbekannter Fehler ist aufgetreten.')
+                try { require('./embeds').error(ita, 'Fehler', 'Ein unbekannter Fehler ist aufgetreten.') } catch {}
             })
         }
     })

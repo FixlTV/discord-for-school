@@ -132,10 +132,15 @@ module.exports = {
             await fs.writeFile('data/test.json', JSON.stringify(test))
             global.events.emit('editMessage')
             if(useEvents) {
+                let { guild } = ita
+
                 if(!args.uhrzeit) args.uhrzeit = { value: 8 }
                 if(!args.dauer) args.dauer = { value: 1 }
                 if(args.uhrzeit.value > 24 || args.uhrzeit.value < 0) return await warn(ita, 'Syntaxfehler', `\`Uhrzeit\` muss eine Zahl zwischen 0 und 24 sein.\nDas Event wird nicht erstellt; der ${subject} Test (${testtype}) am ${day}.${month}. wurde gespeichert.`)
                 if(args.dauer.value < 1 || args.dauer.value > 7) return await warn(ita, 'Syntaxfehler', `\`Dauer\` muss eine Zahl zwischen 1 und 7 sein.\nDas Event wird nicht erstellt; der ${subject} Test (${testtype}) am ${day}.${month}. wurde gespeichert.`)
+                
+                await guild.scheduledEvents.fetch({ force: true })
+
                 let eventData = {
                     name: `${subject} | ${testtype}`,
                     scheduledStartTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), args.uhrzeit.value, 0, 0, 0),
@@ -145,9 +150,16 @@ module.exports = {
                     reason: `Test hinzugefügt von ${ita.user.tag}`,
                     entityMetadata: {location: useEvents}
                 }
-                await ita.guild.scheduledEvents.create(eventData)
+
+                if(![...guild.scheduledEvents.cache.values()]
+                    .filter(e => e.creatorId === client.user.id)
+                    .filter(e => eventData.name === e.name && eventData.scheduledStartTime.getTime() == e.scheduledStartTimestamp)
+                    .length
+                ) {
+                    guild.scheduledEvents.create(eventData)
+                }
             }
-            return await success(ita, `Test hinzugefügt`, `Ein ${subject} Test (${testtype}) wurde am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} hinzugefügt.`)
+            return success(ita, `Test hinzugefügt`, `Ein ${subject} Test (${testtype}) wurde am ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} hinzugefügt.`)
         } else {
             var subject = args.fach.value
             var day = args['tag'].value
