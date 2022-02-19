@@ -163,6 +163,30 @@ module.exports = async () => {
 
     async function getVtp() { return await ynQuestion('\x1b[93m[!]\x1b[0m Vertretungsplan verwenden?') }
 
+    async function getLogin(r) {
+        const webuntis = require('webuntis')
+
+        if(!r) console.log('\x1b[93m[!]\x1b[0m Bitte Untis-Logindaten eingeben (Hilfe: https://github.com/FixlTV/discord-for-school/wiki/Untis#setup):')
+        let username = await question('\x1b[93m[!]\x1b[0m Nutzername: ')
+        let password = await question('\x1b[93m[!]\x1b[0m Passwort:   ')
+        let school = await question('\x1b[93m[!]\x1b[0m Schule:     ')
+        let server = await question('\x1b[93m[!]\x1b[0m Server:     ')
+        if(!server.split('.')?.[1]) server += '.webuntis.com'
+        server = server.replaceAll('https://', '').replaceAll('http://', '').split('/')[0]
+
+        const untis = new webuntis(school, username, password, server)
+        try { await untis.login() } catch (err) {
+            console.error(err)
+            console.error('\x1b[91m%s\x1b[0m', '[X]', 'Anmeldedaten ungültig. Bitte überprüfe deine Angaben.')
+            return await getLogin(true)
+        }
+
+        await untis.logout()
+        console.log('\x1b[92m%s\x1b[0m', '[✓]', 'Anmeldung erfolgreich.')
+
+        return { username, password, school, server }
+    }
+
     if(!fs.existsSync('./config.json')) {
         console.log('\x1b[92m%s\x1b[0m', '[✓]', 'config.json wird angelegt.')
 
@@ -179,6 +203,8 @@ module.exports = async () => {
 
         let vtp = await getVtp()
 
+        let login = await getLogin()
+
         let config = {
             token,
             color: {
@@ -191,7 +217,8 @@ module.exports = async () => {
             channel,
             sendtime: sendTime,
             state,
-            vtp
+            vtp,
+            login
         }
 
         client.destroy()
@@ -209,11 +236,12 @@ module.exports = async () => {
             channel: getChannel,
             mods: getMods,
             state: getState,
-            vtp: getVtp
+            vtp: getVtp,
+            login: getLogin
         }
         for await (let key of require('./config.template.json')) {
             if(!config[key] && config[key] !== false) {
-                if(!changed && changed != false) {
+                if(!changed) {
                     console.log('\x1b[91m%s\x1b[0m', '[X]', 'Config unvollständig!')
                     changed = true
                 }
