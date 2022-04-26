@@ -46,35 +46,41 @@ module.exports = {
                     if(!data.notifications.time?.includes(d.getHours())) continue
                     let homework
                     let test
-                    for (const x in _hw) {
-                        let out = ''
-                        for (const subject in _hw[x]) {
-                            if(data.ignoredSubjects?.includes(subject)) continue
-                            if (Object.hasOwnProperty.call(_hw[x], subject)) {
-                                const element = _hw[x][subject];
-                                if(data.homeworkDone?.includes(element.id)) continue
-                                if(!out) out += ` __fällig in ${x} Tagen:__\n`.replace('fällig in 1 Tagen', 'morgen fällig').replace('fällig in 2 Tagen', 'übermorgen fällig')
-                                out += `  ${subject}: ${element.todo.replaceAll('\n', '')} (ID: ${element.id})\n`
+                    if(data.notifications.types?.hw?.length) {
+                        for (const x in _hw) {
+                            let out = ''
+                            if(!data.notifications.types?.hw?.includes(x)) continue
+                            for (const subject in _hw[x]) {
+                                if(data.ignoredSubjects?.includes(subject)) continue
+                                if (Object.hasOwnProperty.call(_hw[x], subject)) {
+                                    const element = _hw[x][subject];
+                                    if(data.homeworkDone?.includes(element.id)) continue
+                                    if(!out) out += ` __fällig in ${x} Tagen:__\n`.replace('fällig in 1 Tagen', 'morgen fällig').replace('fällig in 2 Tagen', 'übermorgen fällig')
+                                    out += `  ${subject}: ${element.todo.replaceAll('\n', '')} (ID: ${element.id})\n`
+                                }
                             }
-                        }
-                        if(out) {
-                            if(!homework) homework = '**Hausaufgaben**:\n'
-                            homework += out
+                            if(out) {
+                                if(!homework) homework = '**Hausaufgaben**:\n'
+                                homework += out
+                            }
                         }
                     }
-                    for (const x in _test) {
-                        let out = ''
-                        for (const subject in _test[x]) {
-                            if(data.ignoredSubjects?.includes(subject)) continue
-                            if (Object.hasOwnProperty.call(_test[x], subject)) {
-                                const type = _test[x][subject];
-                                if(!out) out = `${` __in ${x} Tagen:__`.replace('in 1 Tagen', 'morgen').replace('in 2 Tagen', 'übermorgen')}\n`
-                                out += `  ${subject}: ${type}\n`
+                    if(data.notifications.types?.test?.length) {
+                        for (const x in _test) {
+                            let out = ''
+                            if(!data.notifications.types?.test?.includes(x)) continue
+                            for (const subject in _test[x]) {
+                                if(data.ignoredSubjects?.includes(subject)) continue
+                                if (Object.hasOwnProperty.call(_test[x], subject)) {
+                                    const type = _test[x][subject];
+                                    if(!out) out = `${` __in ${x} Tagen:__`.replace('in 1 Tagen', 'morgen').replace('in 2 Tagen', 'übermorgen')}\n`
+                                    out += `  ${subject}: ${type}\n`
+                                }
                             }
-                        }
-                        if(out) {
-                            if(!test) test = '**Tests**:\n'
-                            test += out
+                            if(out) {
+                                if(!test) test = '**Tests**:\n'
+                                test += out
+                            }
                         }
                     }
                     if(homework || test) {
