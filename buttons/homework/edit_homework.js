@@ -51,7 +51,9 @@ module.exports = {
                             return {
                                 label: `[${ha.id}] ${ha.subject}`,
                                 value: ha.id.toString(),
-                                description: ha.todo,
+                                description: (() => {
+                                    return ha.todo.length > 97 ? `${ha.todo.substr(0, 97).split(' ').slice(0, -1).join(' ')}...` : ha.todo
+                                })(), //Todo: auf maximal 100 Zeichen kürzen.
                                 default: false
                             }
                         })

@@ -67,13 +67,13 @@ const options =  [
 
 if(useEvents) options[0].options.push({
     name: 'uhrzeit',
-    description: 'Uhrzeit (in Stunden) des Tests. Benötigt für ein Event. Standardmäßig 8 Uhr.',
-    type: 'INTEGER',
+    description: 'Uhrzeit (hh:mm) des Tests. Benötigt für ein Event. Standardmäßig 8 Uhr.',
+    type: 'STRING',
     required: false
 },
 {
     name: 'dauer',
-    description: 'Dauer (in Stunden) des Tests. Benötigt für ein Event. Standardmäßig 1 Stunde.',
+    description: 'Dauer (in Minuten) des Tests. Benötigt für ein Event. Standardmäßig 1 Stunde.',
     type: 'INTEGER',
     required: false
 })
@@ -109,17 +109,19 @@ module.exports = {
             if(useEvents) {
                 let { guild } = ita
 
-                if(!args.uhrzeit) args.uhrzeit = { value: 8 }
+                if(!args.uhrzeit) args.uhrzeit = { value: '8:0' }
                 if(!args.dauer) args.dauer = { value: 1 }
-                if(args.uhrzeit.value > 24 || args.uhrzeit.value < 0) return await warn(ita, 'Syntaxfehler', `\`Uhrzeit\` muss eine Zahl zwischen 0 und 24 sein.\nDas Event wird nicht erstellt; der ${subject} Test (${testtype}) am ${day}.${month}. wurde gespeichert.`)
-                if(args.dauer.value < 1 || args.dauer.value > 7) return await warn(ita, 'Syntaxfehler', `\`Dauer\` muss eine Zahl zwischen 1 und 7 sein.\nDas Event wird nicht erstellt; der ${subject} Test (${testtype}) am ${day}.${month}. wurde gespeichert.`)
+                let [ hours, min ] = args.uhrzeit.value.split(':').map(e => parseInt(e)) 
+                if(isNaN(hours) || hours > 24 || hours < 0) return await warn(ita, 'Syntaxfehler', `\`Uhrzeit\` muss eine gültige Zeit (HH:MM) sein.\nDas Event wird nicht erstellt; der ${subject} Test (${testtype}) am ${day}.${month}. wurde gespeichert.`)
+                if(isNaN(min) || min > 60 || min < 0) return await warn(ita, 'Syntaxfehler', `\`Uhrzeit\` muss eine gültige Zeit (HH:MM) sein.\nDas Event wird nicht erstellt; der ${subject} Test (${testtype}) am ${day}.${month}. wurde gespeichert.`)
+                if(args.dauer.value < 0 || args.dauer.value > 1440) return await warn(ita, 'Syntaxfehler', `\`Dauer\` muss eine positive Zahl < 1440 sein.\nDas Event wird nicht erstellt; der ${subject} Test (${testtype}) am ${day}.${month}. wurde gespeichert.`)
                 
                 await guild.scheduledEvents.fetch()
 
                 let eventData = {
                     name: `${subject} | ${testtype}`,
-                    scheduledStartTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), args.uhrzeit.value, 0, 0, 0),
-                    scheduledEndTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), args.uhrzeit.value + args.dauer.value, 0, 0, 0),
+                    scheduledStartTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, min, 0, 0),
+                    scheduledEndTime: new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, min + args.dauer.value, 0, 0),
                     entityType: 'EXTERNAL',
                     privacyLevel: 'GUILD_ONLY',
                     reason: `Test hinzugefügt von ${ita.user.tag}`,
