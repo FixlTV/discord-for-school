@@ -110,7 +110,7 @@ module.exports = {
                 let { guild } = ita
 
                 if(!args.uhrzeit) args.uhrzeit = { value: '8:0' }
-                if(!args.dauer) args.dauer = { value: 30 }
+                if(!args.dauer) args.dauer = { value: 60 }
                 let [ hours, min ] = args.uhrzeit.value.split(':').map(e => parseInt(e)) 
                 if(isNaN(hours) || hours > 24 || hours < 0) return await warn(ita, 'Syntaxfehler', `\`Uhrzeit\` muss eine gültige Zeit (HH:MM) sein.\nDas Event wird nicht erstellt; der ${subject} Test (${testtype}) am ${day}.${month}. wurde gespeichert.`)
                 if(isNaN(min) || min > 60 || min < 0) return await warn(ita, 'Syntaxfehler', `\`Uhrzeit\` muss eine gültige Zeit (HH:MM) sein.\nDas Event wird nicht erstellt; der ${subject} Test (${testtype}) am ${day}.${month}. wurde gespeichert.`)
