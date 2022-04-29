@@ -49,7 +49,7 @@ module.exports = {
                     if(data.notifications.types?.hw?.length) {
                         for (const x in _hw) {
                             let out = ''
-                            if(!data.notifications.types?.hw?.includes(x)) continue
+                            if(!data.notifications.types?.hw?.includes(parseInt(x))) continue
                             for (const subject in _hw[x]) {
                                 if(data.ignoredSubjects?.includes(subject)) continue
                                 if (Object.hasOwnProperty.call(_hw[x], subject)) {
@@ -68,7 +68,7 @@ module.exports = {
                     if(data.notifications.types?.test?.length) {
                         for (const x in _test) {
                             let out = ''
-                            if(!data.notifications.types?.test?.includes(x)) continue
+                            if(!data.notifications.types?.test?.includes(parseInt(x))) continue
                             for (const subject in _test[x]) {
                                 if(data.ignoredSubjects?.includes(subject)) continue
                                 if (Object.hasOwnProperty.call(_test[x], subject)) {
