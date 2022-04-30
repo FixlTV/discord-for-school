@@ -305,8 +305,8 @@ module.exports = {
                 if(ha) break
             }
             if(!ha) return require('../../../embeds').error(ita, 'Hausaufgabe nicht gefunden', 'Die angegebene Hausaufgabe existiert nicht (mehr).')
-            if(args.month?.value) ha.month = args.month.value - 1
-            if(args.day?.value) ha.day = args.day.value
+            if(args.monat?.value) ha.month = args.monat.value - 1
+            if(args.tag?.value) ha.day = args.tag.value
             if(args.todo?.value) ha.todo = args.todo.value
             if(args.notizen?.value) ha.extra = args.notizen.value
             let has = require('../../../data/ha.json')

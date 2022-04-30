@@ -63,5 +63,14 @@ module.exports = {
         if(ita.replied || ita.deferred) await ita.editReply({ embeds: [embed] }).catch()
         else await ita.reply({ embeds: [embed], ephemeral: true })
         return Promise.resolve(ita)
+    },
+    async warn(ita, title, text) {
+        let embed = new discord.MessageEmbed()
+            .setTitle('⚠️ ' + title)
+            .setColor(color.yellow)
+            .setDescription(text)
+        if(ita.replied || ita.deferred) await ita.editReply({ embeds: [embed] }).catch()
+        else await ita.reply({ embeds: [embed], ephemeral: true }).catch()
+        return Promise.resolve(ita)
     }
 }
